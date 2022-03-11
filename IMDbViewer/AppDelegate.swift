@@ -34,3 +34,5 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
 }
 
+// TODO LIST:
+// search'ten gelen tableviewcell'de viewallbutton hidden olacak, o cell'in height'ı da ona gore azaltılacak.
