@@ -35,4 +35,4 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 }
 
 // TODO LIST:
-// search'ten gelen tableviewcell'de viewallbutton hidden olacak, o cell'in height'ı da ona gore azaltılacak.
+// specific bir movie ya da series'de sağ üstte yıldız ikonu olacak, böylece favorilere eklenip çıkarılabilecek.

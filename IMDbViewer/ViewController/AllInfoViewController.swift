@@ -1,14 +1,14 @@
 //
-//  FavoritesViewController.swift
+//  AllInfoViewController.swift
 //  IMDbViewer
 //
-//  Created by Emre Topçu on 5.03.2022.
+//  Created by Emre Topçu on 14.03.2022.
 //
 
 import UIKit
 
-class FavoritesViewController: UIViewController {
-    
+class AllInfoViewController: UIViewController {
+
     @IBOutlet weak var collectionView: UICollectionView!
     
     var cellWidth = 0
@@ -16,7 +16,7 @@ class FavoritesViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+
         tabBarController?.tabBar.unselectedItemTintColor = UIColor.darkGray
         
         cellWidth = (Int(UIScreen.main.bounds.width) - Int(ViewConstants.spacingBetweenGeneralCells) * (ViewConstants.numberOfItemsInRow + 1)) / ViewConstants.numberOfItemsInRow
@@ -27,15 +27,12 @@ class FavoritesViewController: UIViewController {
         collectionView.collectionViewLayout = flowLayout
         collectionView.dataSource = self
         collectionView.delegate = self
-        collectionView.dragDelegate = self
-        collectionView.dropDelegate = self
         let cellNib = UINib(nibName: "GeneralCollectionViewCell", bundle: nil)
         collectionView.register(cellNib, forCellWithReuseIdentifier: "generalCollectionViewCell")
         
         loadData()
-        
     }
-    
+
     func loadData(){    // temporary
         tempData.append(GeneralCollectionViewCellModel(imageUrl: "https://m.media-amazon.com/images/M/MV5BMjAxMzY3NjcxNF5BMl5BanBnXkFtZTcwNTI5OTM0Mw@@._V1_Ratio0.6791_AL_.jpg", name: "Inception"))
         tempData.append(GeneralCollectionViewCellModel(imageUrl: "https://m.media-amazon.com/images/M/MV5BMWU4N2FjNzYtNTVkNC00NzQ0LTg0MjAtYTJlMjFhNGUxZDFmXkEyXkFqcGdeQXVyNjc1NTYyMjg@._V1_UX128_CR0,3,128,176_AL_.jpg", name: "Once upon a time in hollywood"))
@@ -45,9 +42,10 @@ class FavoritesViewController: UIViewController {
         tempData.append(GeneralCollectionViewCellModel(imageUrl: "https://m.media-amazon.com/images/M/MV5BMjAxMzY3NjcxNF5BMl5BanBnXkFtZTcwNTI5OTM0Mw@@._V1_Ratio0.6791_AL_.jpg", name: "Inception5"))
         tempData.append(GeneralCollectionViewCellModel(imageUrl: "https://m.media-amazon.com/images/M/MV5BMjAxMzY3NjcxNF5BMl5BanBnXkFtZTcwNTI5OTM0Mw@@._V1_Ratio0.6791_AL_.jpg", name: "12 Angry Men"))
     }
+
 }
 
-extension FavoritesViewController: UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout, UICollectionViewDragDelegate, UICollectionViewDropDelegate {
+extension AllInfoViewController: UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return tempData.count
     }
@@ -76,46 +74,20 @@ extension FavoritesViewController: UICollectionViewDelegate, UICollectionViewDat
         return UICollectionViewCell()
     }
     
+    func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
+        if kind == UICollectionView.elementKindSectionHeader {
+            let header = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: "headerCollectionView", for: indexPath) as! HeaderCollectionView
+            header.headerLabel.text = "Some title"
+            return header
+        }
+        return UICollectionReusableView()
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
+            return CGSize(width: collectionView.frame.width, height: 40.0)
+    }
+    
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
         return UIEdgeInsets(top: ViewConstants.spacingBetweenGeneralCells, left: ViewConstants.spacingBetweenGeneralCells, bottom: ViewConstants.spacingBetweenGeneralCells, right: ViewConstants.spacingBetweenGeneralCells)
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, itemsForBeginning session: UIDragSession, at indexPath: IndexPath) -> [UIDragItem] {
-        let itemProvider = NSItemProvider(object: "\(indexPath)" as NSString)
-        let dragItem = UIDragItem(itemProvider: itemProvider)
-        dragItem.localObject = tempData[indexPath.row]
-        return [dragItem]
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, dropSessionDidUpdate session: UIDropSession, withDestinationIndexPath destinationIndexPath: IndexPath?) -> UICollectionViewDropProposal {
-        if collectionView.hasActiveDrag {
-            return UICollectionViewDropProposal(operation: .move, intent: .insertAtDestinationIndexPath)
-        }
-        return UICollectionViewDropProposal(operation: .forbidden)
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, performDropWith coordinator: UICollectionViewDropCoordinator) {
-        var destinationIndexPath: IndexPath
-        if let indexPath = coordinator.destinationIndexPath {
-            destinationIndexPath = indexPath
-        } else {
-            let row = collectionView.numberOfItems(inSection: 0)
-            destinationIndexPath = IndexPath(item: row - 1, section: 0)
-        }
-        if coordinator.proposal.operation == .move {
-            self.reorderItems(coordinator: coordinator, destinationIndexPath: destinationIndexPath, collectionView: collectionView)
-        }
-    }
-    
-    private func reorderItems(coordinator: UICollectionViewDropCoordinator, destinationIndexPath: IndexPath, collectionView: UICollectionView) {
-        if let item = coordinator.items.first, let sourceIndexPath = item.sourceIndexPath {
-            collectionView.performBatchUpdates({
-                tempData.remove(at: sourceIndexPath.item)
-                tempData.insert(item.dragItem.localObject as! GeneralCollectionViewCellModel, at: destinationIndexPath.item)
-                collectionView.deleteItems(at: [sourceIndexPath])
-                collectionView.insertItems(at: [destinationIndexPath])
-            }, completion: nil)
-            coordinator.drop(item.dragItem, toItemAt: destinationIndexPath)
-        }
     }
 }
