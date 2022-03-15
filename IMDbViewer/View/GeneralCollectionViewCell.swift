@@ -8,7 +8,7 @@
 import UIKit
 
 protocol GeneralCollectionViewCellDelegate: AnyObject {
-    func collectionView(collectionViewCell: GeneralCollectionViewCell?, index: Int, didTappedInTableViewCell: GeneralTableViewCell)
+    func collectionView(collectionViewCell: GeneralCollectionViewCell?, index: Int, didTapInTableViewCell: GeneralTableViewCell)
 }
 
 class GeneralCollectionViewCell: UICollectionViewCell {

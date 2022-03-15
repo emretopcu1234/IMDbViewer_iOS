@@ -123,8 +123,6 @@
                     <navigationItem key="navigationItem" title="Movies" id="ItF-0M-iPA"/>
                     <connections>
                         <outlet property="generalTableView" destination="E5c-KA-6Pg" id="7Zh-GE-NuJ"/>
-                        <segue destination="CAy-mb-98u" kind="show" identifier="tempSegueId" id="BFj-yw-n5v"/>
-                        <segue destination="79c-gY-WGn" kind="show" identifier="tempSegueId3" id="vhG-cA-cST"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Bxc-es-Cdu" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
@@ -138,12 +136,24 @@
                     <view key="view" contentMode="scaleToFill" id="kT0-oA-QaO">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="725"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="-1" estimatedSectionHeaderHeight="-1" sectionFooterHeight="-1" estimatedSectionFooterHeight="-1" translatesAutoresizingMaskIntoConstraints="NO" id="nPz-dM-fnG">
+                                <rect key="frame" x="0.0" y="0.0" width="414" height="705"/>
+                                <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                            </tableView>
+                        </subviews>
                         <viewLayoutGuide key="safeArea" id="vPV-2W-9dh"/>
                         <color key="backgroundColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <constraints>
+                            <constraint firstItem="nPz-dM-fnG" firstAttribute="leading" secondItem="vPV-2W-9dh" secondAttribute="leading" id="3yL-3R-oOZ"/>
+                            <constraint firstItem="vPV-2W-9dh" firstAttribute="bottom" secondItem="nPz-dM-fnG" secondAttribute="bottom" constant="20" id="GFW-Ex-8H7"/>
+                            <constraint firstItem="vPV-2W-9dh" firstAttribute="trailing" secondItem="nPz-dM-fnG" secondAttribute="trailing" id="QCY-9t-O8R"/>
+                            <constraint firstItem="nPz-dM-fnG" firstAttribute="top" secondItem="vPV-2W-9dh" secondAttribute="top" id="koS-2y-Vir"/>
+                        </constraints>
                     </view>
                     <navigationItem key="navigationItem" title="Series" id="WyZ-Ee-bd4"/>
                     <connections>
-                        <segue destination="CAy-mb-98u" kind="show" identifier="tempSegueId2" id="dsU-Bt-Cm4"/>
+                        <outlet property="generalTableView" destination="nPz-dM-fnG" id="KpD-Gq-kVh"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="wEG-5N-coX" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
@@ -155,11 +165,11 @@
             <objects>
                 <viewController storyboardIdentifier="specificMovieOrSerieViewController" id="CAy-mb-98u" userLabel="Specific Movie or Serie" customClass="SpecificMovieOrSerieViewController" customModule="IMDbViewer" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="eRd-Nx-TQb">
-                        <rect key="frame" x="0.0" y="0.0" width="414" height="1034"/>
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="1205"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Osn-Uy-9fE">
-                                <rect key="frame" x="0.0" y="0.0" width="414" height="1034"/>
+                                <rect key="frame" x="0.0" y="44" width="414" height="1127"/>
                                 <subviews>
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="HiC-Ht-MeF" userLabel="Content View">
                                         <rect key="frame" x="0.0" y="0.0" width="414" height="1437.5"/>
@@ -523,7 +533,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="OZL-Va-YMD" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-2197.1014492753625" y="1933.59375"/>
+            <point key="canvasLocation" x="-2593" y="1867"/>
         </scene>
         <!--Specific Actor View Controller-->
         <scene sceneID="EUL-5Z-olM">
@@ -667,25 +677,25 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dIK-a5-qzv" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-1258" y="1936"/>
+            <point key="canvasLocation" x="-1767" y="1868"/>
         </scene>
         <!--All Info View Controller-->
         <scene sceneID="HPm-NX-Q0I">
             <objects>
                 <viewController id="79c-gY-WGn" customClass="AllInfoViewController" customModule="IMDbViewer" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="Brr-ox-1mS">
-                        <rect key="frame" x="0.0" y="0.0" width="414" height="725"/>
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="YaS-X7-hje">
-                                <rect key="frame" x="10" y="10" width="394" height="1"/>
+                                <rect key="frame" x="10" y="54" width="394" height="1"/>
                                 <color key="backgroundColor" white="0.66666666666666663" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="1" id="jXK-fP-YPs"/>
                                 </constraints>
                             </view>
                             <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" dataMode="prototypes" translatesAutoresizingMaskIntoConstraints="NO" id="bBZ-uU-XxC">
-                                <rect key="frame" x="0.0" y="20" width="414" height="705"/>
+                                <rect key="frame" x="0.0" y="64" width="414" height="798"/>
                                 <color key="backgroundColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <collectionViewFlowLayout key="collectionViewLayout" automaticEstimatedItemSize="YES" minimumLineSpacing="10" minimumInteritemSpacing="10" id="iZq-5m-ZdN">
                                     <size key="itemSize" width="128" height="128"/>
@@ -736,7 +746,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="CYL-oA-K8z" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-317" y="1816"/>
+            <point key="canvasLocation" x="-952" y="1763"/>
         </scene>
         <!--Favorites-->
         <scene sceneID="byd-NG-FJ5">
@@ -787,9 +797,6 @@
             <point key="canvasLocation" x="-952.17391304347836" y="1029.9107142857142"/>
         </scene>
     </scenes>
-    <inferredMetricsTieBreakers>
-        <segue reference="BFj-yw-n5v"/>
-    </inferredMetricsTieBreakers>
     <color key="tintColor" white="0.66666666669999997" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
     <resources>
         <image name="film" catalog="system" width="128" height="93"/>

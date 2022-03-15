@@ -35,4 +35,4 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 }
 
 // TODO LIST:
-// specific bir movie ya da series'de sağ üstte yıldız ikonu olacak, böylece favorilere eklenip çıkarılabilecek.
+// movies model'daki get initial data icerisindeki todo'lar yapılacak. (delegation vb olusturulup view'a bilgi akacak, view listeye gore ekrana yansıtacak.)

@@ -15,6 +15,8 @@ class MoviesViewController: UIViewController {
     var tempData = [GeneralTableViewCellModel]()
     var collectionCellHeight = 0
     
+    let moviesModel = MoviesModel.shared
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -32,13 +34,19 @@ class MoviesViewController: UIViewController {
         generalTableView.separatorColor = UIColor.lightGray
         
         collectionCellHeight = (Int(UIScreen.main.bounds.width) - Int(ViewConstants.spacingBetweenGeneralCells) * (ViewConstants.numberOfItemsInRow + 1)) / ViewConstants.numberOfItemsInRow + 125
-        loadData()
     }
     
     override func viewWillAppear(_ animated: Bool) {
         searchController.searchBar.tintColor = UIColor.lightGray
         searchController.searchBar.searchTextField.backgroundColor = UIColor(named: "DarkGray")
         searchController.searchBar.searchTextField.textColor = UIColor.lightGray
+        
+        if searchController.searchBar.searchTextField.text == "" {
+            moviesModel.getInitialList()
+        }
+        else {
+            moviesModel.getMovieList(search: searchController.searchBar.searchTextField.text!)
+        }
     }
 
     func loadData(){    // temporary
@@ -62,7 +70,10 @@ class MoviesViewController: UIViewController {
 extension MoviesViewController: UISearchBarDelegate {
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
         // TODO arama sonucları ekrana yansıtılacak
-        performSegue(withIdentifier: "tempSegueId", sender: self)
+        let vc = UIStoryboard.init(name: "Main", bundle: Bundle.main).instantiateViewController(withIdentifier: "specificMovieOrSerieViewController") as? SpecificMovieOrSerieViewController
+        navigationItem.backBarButtonItem = UIBarButtonItem(
+            title: "Very Back", style: .plain, target: nil, action: nil)
+        navigationController?.pushViewController(vc!, animated: true)
     }
     
     func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
@@ -105,8 +116,9 @@ extension MoviesViewController: UITableViewDelegate, UITableViewDataSource {
 }
 
 extension MoviesViewController: GeneralCollectionViewCellDelegate {
-    func collectionView(collectionViewCell: GeneralCollectionViewCell?, index: Int, didTappedInTableViewCell: GeneralTableViewCell) {
-        let title = didTappedInTableViewCell.titleLabel.text!
+    func collectionView(collectionViewCell: GeneralCollectionViewCell?, index: Int, didTapInTableViewCell: GeneralTableViewCell) {
+        let title = didTapInTableViewCell.titleLabel.text!
         print("You tapped the cell \(index) in the row of colors \(title)")
+        
     }
 }

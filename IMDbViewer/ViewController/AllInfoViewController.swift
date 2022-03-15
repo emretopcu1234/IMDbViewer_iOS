@@ -11,13 +11,16 @@ class AllInfoViewController: UIViewController {
 
     @IBOutlet weak var collectionView: UICollectionView!
     
+    let searchController = UISearchController()
     var cellWidth = 0
     var tempData = [GeneralCollectionViewCellModel]()
     
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        tabBarController?.tabBar.unselectedItemTintColor = UIColor.darkGray
+        
+        searchController.searchBar.delegate = self
+        navigationItem.searchController = searchController
+        navigationController?.hidesBarsOnSwipe = false
         
         cellWidth = (Int(UIScreen.main.bounds.width) - Int(ViewConstants.spacingBetweenGeneralCells) * (ViewConstants.numberOfItemsInRow + 1)) / ViewConstants.numberOfItemsInRow
         
@@ -32,6 +35,12 @@ class AllInfoViewController: UIViewController {
         
         loadData()
     }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        searchController.searchBar.tintColor = UIColor.lightGray
+        searchController.searchBar.searchTextField.backgroundColor = UIColor(named: "DarkGray")
+        searchController.searchBar.searchTextField.textColor = UIColor.lightGray
+    }
 
     func loadData(){    // temporary
         tempData.append(GeneralCollectionViewCellModel(imageUrl: "https://m.media-amazon.com/images/M/MV5BMjAxMzY3NjcxNF5BMl5BanBnXkFtZTcwNTI5OTM0Mw@@._V1_Ratio0.6791_AL_.jpg", name: "Inception"))
@@ -42,7 +51,16 @@ class AllInfoViewController: UIViewController {
         tempData.append(GeneralCollectionViewCellModel(imageUrl: "https://m.media-amazon.com/images/M/MV5BMjAxMzY3NjcxNF5BMl5BanBnXkFtZTcwNTI5OTM0Mw@@._V1_Ratio0.6791_AL_.jpg", name: "Inception5"))
         tempData.append(GeneralCollectionViewCellModel(imageUrl: "https://m.media-amazon.com/images/M/MV5BMjAxMzY3NjcxNF5BMl5BanBnXkFtZTcwNTI5OTM0Mw@@._V1_Ratio0.6791_AL_.jpg", name: "12 Angry Men"))
     }
+}
 
+extension AllInfoViewController: UISearchBarDelegate {
+    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
+        // TODO arama sonucları ekrana yansıtılacak
+    }
+    
+    func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
+        // TODO eger daha onceden yapılmıs arama varsa, sonucları ekrandan silinecek.
+    }
 }
 
 extension AllInfoViewController: UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {

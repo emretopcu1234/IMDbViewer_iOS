@@ -9,6 +9,8 @@ import UIKit
 
 class SpecificMovieOrSerieViewController: UIViewController {
 
+    var id: String = ""
+    
     @IBOutlet weak var titleLabel: UILabel!
     @IBOutlet weak var releaseDateLabel: UILabel!
     @IBOutlet weak var plotLabel: UILabel!
@@ -31,8 +33,12 @@ class SpecificMovieOrSerieViewController: UIViewController {
     @IBOutlet weak var similarsLabel: UILabel!
     @IBOutlet weak var similarsCollectionView: UICollectionView!
     
+    var starFilledButton: UIBarButtonItem?
+    var starUnfilledButton: UIBarButtonItem?
+    
     var castViewControllerHelper: CastCollectionViewHelper?
     var similarsViewControllerHelper: SimilarsCollectionViewHelper?
+    
     var tempData = [DetailedCollectionViewCellModel]()
     var tempData2 = [DetailedCollectionViewCellModel]()
     
@@ -40,6 +46,9 @@ class SpecificMovieOrSerieViewController: UIViewController {
         super.viewDidLoad()
         
         navigationItem.titleView = UIView()
+        starFilledButton = UIBarButtonItem(image: UIImage(systemName: "star.fill"), style: .plain, target: self, action: #selector(removeFromFavorites(sender:)))
+        starUnfilledButton = UIBarButtonItem(image: UIImage(systemName: "star"), style: .plain, target: self, action: #selector(addToFavorites(sender:)))
+        navigationItem.rightBarButtonItem = starUnfilledButton
         
         titleLabel.sizeToFit()
         releaseDateLabel.sizeToFit()
@@ -62,20 +71,6 @@ class SpecificMovieOrSerieViewController: UIViewController {
         rottentomatoesRatingLabel.sizeToFit()
         similarsLabel.sizeToFit()
         similarsLabel.attributedText = NSMutableAttributedString(string: "Similars", attributes: [NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 22.0)])
-        
-        // temporary start
-        setTitle(title: "Something Very Nice Movie")
-        setReleaseDate(releaseDate: "2010-07-03")
-        setPlotInfo(plotInfo: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.")
-        setGenres(genres: "Science, Action")
-        setDirector(director: "Quentin Tarantino")
-        setWriter(writer: "Luc Besson")
-        setDuration(duration: "150")
-        setImdbRating(rating: "8.8")
-        setMetacriticRating(rating: "78")
-        setThemoviedbRating(rating: "5.2")
-        setRottentomatoesRating(rating: "92")
-        // temporary end
         
         let flowLayout1 = UICollectionViewFlowLayout()
         flowLayout1.scrollDirection = .horizontal
@@ -101,12 +96,37 @@ class SpecificMovieOrSerieViewController: UIViewController {
         loadData()  // temporary
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        
+        
+        // temporary start
+        setTitle(title: "Something Very Nice Movie")
+        setReleaseDate(releaseDate: "2010-07-03")
+        setPlotInfo(plotInfo: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.")
+        setGenres(genres: "Science, Action")
+        setDirector(director: "Quentin Tarantino")
+        setWriter(writer: "Luc Besson")
+        setDuration(duration: "150")
+        setImdbRating(rating: "8.8")
+        setMetacriticRating(rating: "78")
+        setThemoviedbRating(rating: "5.2")
+        setRottentomatoesRating(rating: "92")
+        // temporary end
+    }
+    
     @IBAction func trailerPlayClicked(_ sender: UIButton) {
         let vc = UIStoryboard.init(name: "Main", bundle: Bundle.main).instantiateViewController(withIdentifier: "specificActorViewController") as? SpecificActorViewController
         navigationItem.backBarButtonItem = UIBarButtonItem(
             title: "Very Back", style: .plain, target: nil, action: nil)
-//        onemli: gelecek view'ın back button'ındaki deger bu class'ın elemanına göre belirlenir, gelecek view'un değil!!!
         navigationController?.pushViewController(vc!, animated: true)
+    }
+    
+    @objc func addToFavorites(sender: AnyObject) {
+        navigationItem.rightBarButtonItem = starFilledButton
+    }
+    
+    @objc func removeFromFavorites(sender: AnyObject) {
+        navigationItem.rightBarButtonItem = starUnfilledButton
     }
     
     private func setTitle(title: String) {
