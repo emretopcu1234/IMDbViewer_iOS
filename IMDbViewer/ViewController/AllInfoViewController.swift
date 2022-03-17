@@ -13,11 +13,12 @@ class AllInfoViewController: UIViewController {
     
     let searchController = UISearchController()
     var cellWidth = 0
-    var tempData = [GeneralCollectionViewCellModel]()
+    var data: GeneralTableViewCellModel?
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        navigationItem.titleView = UIView()
         searchController.searchBar.delegate = self
         navigationItem.searchController = searchController
         navigationController?.hidesBarsOnSwipe = false
@@ -32,24 +33,13 @@ class AllInfoViewController: UIViewController {
         collectionView.delegate = self
         let cellNib = UINib(nibName: "GeneralCollectionViewCell", bundle: nil)
         collectionView.register(cellNib, forCellWithReuseIdentifier: "generalCollectionViewCell")
-        
-        loadData()
     }
     
     override func viewWillAppear(_ animated: Bool) {
+        title = data?.title
         searchController.searchBar.tintColor = UIColor.lightGray
         searchController.searchBar.searchTextField.backgroundColor = UIColor(named: "DarkGray")
         searchController.searchBar.searchTextField.textColor = UIColor.lightGray
-    }
-
-    func loadData(){    // temporary
-        tempData.append(GeneralCollectionViewCellModel(imageUrl: "https://m.media-amazon.com/images/M/MV5BMjAxMzY3NjcxNF5BMl5BanBnXkFtZTcwNTI5OTM0Mw@@._V1_Ratio0.6791_AL_.jpg", name: "Inception"))
-        tempData.append(GeneralCollectionViewCellModel(imageUrl: "https://m.media-amazon.com/images/M/MV5BMWU4N2FjNzYtNTVkNC00NzQ0LTg0MjAtYTJlMjFhNGUxZDFmXkEyXkFqcGdeQXVyNjc1NTYyMjg@._V1_UX128_CR0,3,128,176_AL_.jpg", name: "Once upon a time in hollywood"))
-        tempData.append(GeneralCollectionViewCellModel(imageUrl: "https://m.media-amazon.com/images/M/MV5BMjAxMzY3NjcxNF5BMl5BanBnXkFtZTcwNTI5OTM0Mw@@._V1_Ratio0.6791_AL_.jpg", name: "12 Angry Men"))
-        tempData.append(GeneralCollectionViewCellModel(imageUrl: "https://m.media-amazon.com/images/M/MV5BMWU4N2FjNzYtNTVkNC00NzQ0LTg0MjAtYTJlMjFhNGUxZDFmXkEyXkFqcGdeQXVyNjc1NTYyMjg@._V1_UX128_CR0,3,128,176_AL_.jpg", name: "Inception3"))
-        tempData.append(GeneralCollectionViewCellModel(imageUrl: "https://m.media-amazon.com/images/M/MV5BMjAxMzY3NjcxNF5BMl5BanBnXkFtZTcwNTI5OTM0Mw@@._V1_Ratio0.6791_AL_.jpg", name: "Inception4"))
-        tempData.append(GeneralCollectionViewCellModel(imageUrl: "https://m.media-amazon.com/images/M/MV5BMjAxMzY3NjcxNF5BMl5BanBnXkFtZTcwNTI5OTM0Mw@@._V1_Ratio0.6791_AL_.jpg", name: "Inception5"))
-        tempData.append(GeneralCollectionViewCellModel(imageUrl: "https://m.media-amazon.com/images/M/MV5BMjAxMzY3NjcxNF5BMl5BanBnXkFtZTcwNTI5OTM0Mw@@._V1_Ratio0.6791_AL_.jpg", name: "12 Angry Men"))
     }
 }
 
@@ -65,7 +55,7 @@ extension AllInfoViewController: UISearchBarDelegate {
 
 extension AllInfoViewController: UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return tempData.count
+        return data?.items.count ?? 0
     }
     
     func numberOfSections(in collectionView: UICollectionView) -> Int {
@@ -78,7 +68,7 @@ extension AllInfoViewController: UICollectionViewDelegate, UICollectionViewDataS
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         if let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "generalCollectionViewCell", for: indexPath) as? GeneralCollectionViewCell {
-            let url = URL(string: tempData[indexPath.row].imageUrl)
+            let url = URL(string: data?.items[indexPath.row].imageUrl ?? "")
             DispatchQueue.global().async {
                 let data = try? Data(contentsOf: url!)
                 DispatchQueue.main.async {
@@ -86,7 +76,7 @@ extension AllInfoViewController: UICollectionViewDelegate, UICollectionViewDataS
                 }
             }
             cell.imageView.frame = CGRect(x: 0, y: 0, width: cellWidth, height: cellWidth)
-            cell.nameLabel.text = tempData[indexPath.row].name
+            cell.nameLabel.text = data?.items[indexPath.row].name ?? ""
             return cell
         }
         return UICollectionViewCell()
@@ -95,17 +85,17 @@ extension AllInfoViewController: UICollectionViewDelegate, UICollectionViewDataS
     func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
         if kind == UICollectionView.elementKindSectionHeader {
             let header = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: "headerCollectionView", for: indexPath) as! HeaderCollectionView
-            header.headerLabel.text = "Some title"
+            header.headerLabel.text = data?.title
             return header
         }
         return UICollectionReusableView()
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
-            return CGSize(width: collectionView.frame.width, height: 40.0)
+            return CGSize(width: collectionView.frame.width, height: 50.0)
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
-        return UIEdgeInsets(top: ViewConstants.spacingBetweenGeneralCells, left: ViewConstants.spacingBetweenGeneralCells, bottom: ViewConstants.spacingBetweenGeneralCells, right: ViewConstants.spacingBetweenGeneralCells)
+        return UIEdgeInsets(top: 0, left: ViewConstants.spacingBetweenGeneralCells, bottom: ViewConstants.spacingBetweenGeneralCells, right: ViewConstants.spacingBetweenGeneralCells)
     }
 }

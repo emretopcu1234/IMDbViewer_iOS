@@ -12,4 +12,5 @@ class ViewConstants {
     static let spacingBetweenGeneralCells: CGFloat = 25
     static let spacingBetweenDetailedCells: CGFloat = 10
     static let numberOfItemsInRow = 2
+    static let numberOfListItemsShown = 6
 }

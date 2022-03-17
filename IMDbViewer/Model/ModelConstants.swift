@@ -8,8 +8,9 @@
 import Foundation
 
 class ModelConstants {
-    static let IMDB_API_KEY = "YOUR API KEY"
+    static let IMDB_API_KEY = "k_m5vicj96/"
     static let BASE_URL = "https://imdb-api.com/en/API/"
     static let MOST_POPULAR_MOVIES_EXT = "MostPopularMovies/"
     static let TOP_250_MOVIES_EXT = "Top250Movies/"
+    static let SEARCH_MOVIE_EXT = "SearchMovie/"
 }

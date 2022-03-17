@@ -682,7 +682,7 @@
         <!--All Info View Controller-->
         <scene sceneID="HPm-NX-Q0I">
             <objects>
-                <viewController id="79c-gY-WGn" customClass="AllInfoViewController" customModule="IMDbViewer" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="allInfoViewController" id="79c-gY-WGn" customClass="AllInfoViewController" customModule="IMDbViewer" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="Brr-ox-1mS">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>

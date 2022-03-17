@@ -12,7 +12,8 @@ class MoviesViewController: UIViewController {
     @IBOutlet weak var generalTableView: UITableView!
     
     let searchController = UISearchController()
-    var tempData = [GeneralTableViewCellModel]()
+    var shortMovieData = [GeneralTableViewCellModel]()
+    var allMovieData = [GeneralTableViewCellModel]()
     var collectionCellHeight = 0
     
     let moviesModel = MoviesModel.shared
@@ -34,76 +35,85 @@ class MoviesViewController: UIViewController {
         generalTableView.separatorColor = UIColor.lightGray
         
         collectionCellHeight = (Int(UIScreen.main.bounds.width) - Int(ViewConstants.spacingBetweenGeneralCells) * (ViewConstants.numberOfItemsInRow + 1)) / ViewConstants.numberOfItemsInRow + 125
+        
+        moviesModel.moviesDelegate = self
+        moviesModel.getInitialList()
     }
     
     override func viewWillAppear(_ animated: Bool) {
         searchController.searchBar.tintColor = UIColor.lightGray
         searchController.searchBar.searchTextField.backgroundColor = UIColor(named: "DarkGray")
         searchController.searchBar.searchTextField.textColor = UIColor.lightGray
-        
-        if searchController.searchBar.searchTextField.text == "" {
-            moviesModel.getInitialList()
-        }
-        else {
-            moviesModel.getMovieList(search: searchController.searchBar.searchTextField.text!)
-        }
     }
+}
 
-    func loadData(){    // temporary
-        var collection = [GeneralCollectionViewCellModel]()
-        collection.append(GeneralCollectionViewCellModel(imageUrl: "https://m.media-amazon.com/images/M/MV5BMjAxMzY3NjcxNF5BMl5BanBnXkFtZTcwNTI5OTM0Mw@@._V1_Ratio0.6791_AL_.jpg", name: "Inception"))
-        collection.append(GeneralCollectionViewCellModel(imageUrl: "https://m.media-amazon.com/images/M/MV5BMWU4N2FjNzYtNTVkNC00NzQ0LTg0MjAtYTJlMjFhNGUxZDFmXkEyXkFqcGdeQXVyNjc1NTYyMjg@._V1_UX128_CR0,3,128,176_AL_.jpg", name: "Once upon a time in hollywood"))
-        collection.append(GeneralCollectionViewCellModel(imageUrl: "https://m.media-amazon.com/images/M/MV5BMWU4N2FjNzYtNTVkNC00NzQ0LTg0MjAtYTJlMjFhNGUxZDFmXkEyXkFqcGdeQXVyNjc1NTYyMjg@._V1_UX128_CR0,3,128,176_AL_.jpg", name: "Inception3"))
-        collection.append(GeneralCollectionViewCellModel(imageUrl: "https://m.media-amazon.com/images/M/MV5BMjAxMzY3NjcxNF5BMl5BanBnXkFtZTcwNTI5OTM0Mw@@._V1_Ratio0.6791_AL_.jpg", name: "Inception4"))
-        collection.append(GeneralCollectionViewCellModel(imageUrl: "https://m.media-amazon.com/images/M/MV5BMjAxMzY3NjcxNF5BMl5BanBnXkFtZTcwNTI5OTM0Mw@@._V1_Ratio0.6791_AL_.jpg", name: "Inception5"))
-        tempData.append(GeneralTableViewCellModel(title: "Results", items: collection))
-        collection.append(GeneralCollectionViewCellModel(imageUrl: "https://m.media-amazon.com/images/M/MV5BMjAxMzY3NjcxNF5BMl5BanBnXkFtZTcwNTI5OTM0Mw@@._V1_Ratio0.6791_AL_.jpg", name: "12 Angry Men"))
-        tempData.append(GeneralTableViewCellModel(title: "Top 100", items: collection))
-        collection.append(GeneralCollectionViewCellModel(imageUrl: "https://m.media-amazon.com/images/M/MV5BMjAxMzY3NjcxNF5BMl5BanBnXkFtZTcwNTI5OTM0Mw@@._V1_Ratio0.6791_AL_.jpg", name: "Inception5"))
-        collection.append(GeneralCollectionViewCellModel(imageUrl: "https://m.media-amazon.com/images/M/MV5BMjAxMzY3NjcxNF5BMl5BanBnXkFtZTcwNTI5OTM0Mw@@._V1_Ratio0.6791_AL_.jpg", name: "Inception5"))
-        collection.append(GeneralCollectionViewCellModel(imageUrl: "https://m.media-amazon.com/images/M/MV5BMjAxMzY3NjcxNF5BMl5BanBnXkFtZTcwNTI5OTM0Mw@@._V1_Ratio0.6791_AL_.jpg", name: "Inception5"))
-        collection.append(GeneralCollectionViewCellModel(imageUrl: "https://m.media-amazon.com/images/M/MV5BMjAxMzY3NjcxNF5BMl5BanBnXkFtZTcwNTI5OTM0Mw@@._V1_Ratio0.6791_AL_.jpg", name: "Inception5"))
-        tempData.append(GeneralTableViewCellModel(title: "Top 50", items: collection))
+extension MoviesViewController: MoviesDelegate {
+    func onMovieListReceived(movieList: [String: [MovieOrSerieListItemType]]) {
+        allMovieData.removeAll()
+        shortMovieData.removeAll()
+        if movieList["Results"] != nil {
+            var resultList = [GeneralCollectionViewCellModel]()
+            for movie in movieList["Results"]! {
+                resultList.append(GeneralCollectionViewCellModel(imageUrl: movie.image, name: movie.title))
+            }
+            shortMovieData.append(GeneralTableViewCellModel(title: "Results", items: resultList))
+        }
+        var mostPopularList = [GeneralCollectionViewCellModel]()
+        for movie in movieList["Most Popular"]! {
+            mostPopularList.append(GeneralCollectionViewCellModel(imageUrl: movie.image, name: movie.title))
+        }
+        shortMovieData.append(GeneralTableViewCellModel(title: "Most Popular", items: Array(mostPopularList.prefix(ViewConstants.numberOfListItemsShown))))
+        allMovieData.append(GeneralTableViewCellModel(title: "Most Popular", items: mostPopularList))
+        var top250List = [GeneralCollectionViewCellModel]()
+        for movie in movieList["Top 250"]! {
+            top250List.append(GeneralCollectionViewCellModel(imageUrl: movie.image, name: movie.title))
+        }
+        shortMovieData.append(GeneralTableViewCellModel(title: "Top 250", items: Array(top250List.prefix(ViewConstants.numberOfListItemsShown))))
+        allMovieData.append(GeneralTableViewCellModel(title: "Top 250", items: top250List))
+        
+        DispatchQueue.main.async {
+            self.generalTableView.reloadData()
+        }
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+            self.generalTableView.setContentOffset(.zero, animated: true)
+        }
     }
 }
 
 extension MoviesViewController: UISearchBarDelegate {
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
-        // TODO arama sonucları ekrana yansıtılacak
-        let vc = UIStoryboard.init(name: "Main", bundle: Bundle.main).instantiateViewController(withIdentifier: "specificMovieOrSerieViewController") as? SpecificMovieOrSerieViewController
-        navigationItem.backBarButtonItem = UIBarButtonItem(
-            title: "Very Back", style: .plain, target: nil, action: nil)
-        navigationController?.pushViewController(vc!, animated: true)
+        moviesModel.getMovieList(search: searchController.searchBar.searchTextField.text!)
     }
     
     func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
-        // TODO eger daha onceden yapılmıs arama varsa, sonucları ekrandan silinecek.
+        moviesModel.getInitialList()
     }
 }
 
 extension MoviesViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return tempData.count
+        return shortMovieData.count
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        var rowNumber = Double(tempData[indexPath.row].items.count) / Double(ViewConstants.numberOfItemsInRow)
+        var rowNumber = Double(shortMovieData[indexPath.row].items.count) / Double(ViewConstants.numberOfItemsInRow)
         rowNumber = rowNumber.rounded(.up)
         return CGFloat(collectionCellHeight * Int(rowNumber) + 100)
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         if let cell = tableView.dequeueReusableCell(withIdentifier: "generalTableViewCell") as? GeneralTableViewCell {
-            cell.titleLabel.text = tempData[indexPath.row].title
-            if tempData[indexPath.row].title == "Results" {
+            cell.titleLabel.text = shortMovieData[indexPath.row].title
+            if shortMovieData[indexPath.row].title == "Results" {
                 cell.viewAllButton.isHidden = true
             }
             else {
                 cell.viewAllButton.isHidden = false
             }
+            cell.generalTableViewCellDelegate = self
             cell.generalCollectionViewCellDelegate = self
-            let rowArray = tempData[indexPath.row].items
-            cell.updateCellWith(row: rowArray)
+            let cellData = shortMovieData[indexPath.row].items
+            cell.updateCellWith(data: cellData)
             cell.backgroundColor = UIColor.black
             return cell
         }
@@ -112,6 +122,20 @@ extension MoviesViewController: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
         cell.contentView.backgroundColor = UIColor.black
+    }
+}
+
+extension MoviesViewController: GeneralTableViewCellDelegate {
+    func viewAllButtonPressed(title: String) {
+        let vc = UIStoryboard.init(name: "Main", bundle: Bundle.main).instantiateViewController(withIdentifier: "allInfoViewController") as? AllInfoViewController
+        vc?.title = title
+        for data in allMovieData {
+            if data.title == title {
+                vc?.data = data
+                break
+            }
+        }
+        navigationController?.pushViewController(vc!, animated: true)
     }
 }
 

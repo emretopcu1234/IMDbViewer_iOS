@@ -7,6 +7,10 @@
 
 import UIKit
 
+protocol GeneralTableViewCellDelegate: AnyObject {
+    func viewAllButtonPressed(title: String)
+}
+
 class GeneralTableViewCell: UITableViewCell {
     
     @IBOutlet weak var titleLabel: UILabel!
@@ -14,8 +18,9 @@ class GeneralTableViewCell: UITableViewCell {
     @IBOutlet weak var viewAllButton: UIButton!
     
     weak var generalCollectionViewCellDelegate: GeneralCollectionViewCellDelegate?
-    var tempData = [GeneralCollectionViewCellModel]()
+    var tableViewCellData = [GeneralCollectionViewCellModel]()
     var cellWidth = 0
+    var generalTableViewCellDelegate: GeneralTableViewCellDelegate?
     
     override func awakeFromNib() {
         super.awakeFromNib()
@@ -35,16 +40,20 @@ class GeneralTableViewCell: UITableViewCell {
     override func setSelected(_ selected: Bool, animated: Bool) {
         super.setSelected(selected, animated: animated)
     }
+    
+    @IBAction func viewAllButtonPressed(_ sender: UIButton) {
+        generalTableViewCellDelegate?.viewAllButtonPressed(title: titleLabel.text!)
+    }
 }
 
 extension GeneralTableViewCell: UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
-    func updateCellWith(row: [GeneralCollectionViewCellModel]) {
-        tempData = row
+    func updateCellWith(data: [GeneralCollectionViewCellModel]) {
+        tableViewCellData = data
         generalCollectionView.reloadData()
     }
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return tempData.count
+        return tableViewCellData.count
     }
     
     func numberOfSections(in collectionView: UICollectionView) -> Int {
@@ -57,7 +66,7 @@ extension GeneralTableViewCell: UICollectionViewDelegate, UICollectionViewDataSo
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         if let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "generalCollectionViewCell", for: indexPath) as? GeneralCollectionViewCell {
-            let url = URL(string: tempData[indexPath.row].imageUrl)
+            let url = URL(string: tableViewCellData[indexPath.row].imageUrl)
             DispatchQueue.global().async {
                 let data = try? Data(contentsOf: url!)
                 DispatchQueue.main.async {
@@ -65,7 +74,7 @@ extension GeneralTableViewCell: UICollectionViewDelegate, UICollectionViewDataSo
                 }
             }
             cell.imageView.frame = CGRect(x: 0, y: 0, width: cellWidth, height: cellWidth)
-            cell.nameLabel.text = tempData[indexPath.row].name
+            cell.nameLabel.text = tableViewCellData[indexPath.row].name
             return cell
         }
         return UICollectionViewCell()

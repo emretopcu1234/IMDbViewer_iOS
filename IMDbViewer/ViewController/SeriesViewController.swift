@@ -90,8 +90,8 @@ extension SeriesViewController: UITableViewDelegate, UITableViewDataSource {
                 cell.viewAllButton.isHidden = false
             }
             cell.generalCollectionViewCellDelegate = self
-            let rowArray = tempData[indexPath.row].items
-            cell.updateCellWith(row: rowArray)
+            let cellData = tempData[indexPath.row].items
+            cell.updateCellWith(data: cellData)
             cell.backgroundColor = UIColor.black
             return cell
         }
