@@ -54,19 +54,19 @@ extension MoviesViewController: MoviesDelegate {
         if movieList["Results"] != nil {
             var resultList = [GeneralCollectionViewCellModel]()
             for movie in movieList["Results"]! {
-                resultList.append(GeneralCollectionViewCellModel(imageUrl: movie.image, name: movie.title))
+                resultList.append(GeneralCollectionViewCellModel(id: movie.id, imageUrl: movie.image, name: movie.title))
             }
             shortMovieData.append(GeneralTableViewCellModel(title: "Results", items: resultList))
         }
         var mostPopularList = [GeneralCollectionViewCellModel]()
         for movie in movieList["Most Popular"]! {
-            mostPopularList.append(GeneralCollectionViewCellModel(imageUrl: movie.image, name: movie.title))
+            mostPopularList.append(GeneralCollectionViewCellModel(id: movie.id, imageUrl: movie.image, name: movie.title))
         }
         shortMovieData.append(GeneralTableViewCellModel(title: "Most Popular", items: Array(mostPopularList.prefix(ViewConstants.numberOfListItemsShown))))
         allMovieData.append(GeneralTableViewCellModel(title: "Most Popular", items: mostPopularList))
         var top250List = [GeneralCollectionViewCellModel]()
         for movie in movieList["Top 250"]! {
-            top250List.append(GeneralCollectionViewCellModel(imageUrl: movie.image, name: movie.title))
+            top250List.append(GeneralCollectionViewCellModel(id: movie.id, imageUrl: movie.image, name: movie.title))
         }
         shortMovieData.append(GeneralTableViewCellModel(title: "Top 250", items: Array(top250List.prefix(ViewConstants.numberOfListItemsShown))))
         allMovieData.append(GeneralTableViewCellModel(title: "Top 250", items: top250List))
@@ -142,7 +142,14 @@ extension MoviesViewController: GeneralTableViewCellDelegate {
 extension MoviesViewController: GeneralCollectionViewCellDelegate {
     func collectionView(collectionViewCell: GeneralCollectionViewCell?, index: Int, didTapInTableViewCell: GeneralTableViewCell) {
         let title = didTapInTableViewCell.titleLabel.text!
-        print("You tapped the cell \(index) in the row of colors \(title)")
-        
+        for data in shortMovieData {
+            if data.title == title {
+                let vc = UIStoryboard.init(name: "Main", bundle: Bundle.main).instantiateViewController(withIdentifier: "specificMovieOrSerieViewController") as? SpecificMovieOrSerieViewController
+                vc?.id = data.items[index].id
+                vc?.fromMovie = true
+                navigationController?.pushViewController(vc!, animated: true)
+                break
+            }
+        }
     }
 }

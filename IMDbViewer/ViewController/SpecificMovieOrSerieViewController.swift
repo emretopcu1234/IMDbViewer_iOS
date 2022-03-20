@@ -10,6 +10,7 @@ import UIKit
 class SpecificMovieOrSerieViewController: UIViewController {
 
     var id: String = ""
+    var fromMovie: Bool = true
     
     @IBOutlet weak var titleLabel: UILabel!
     @IBOutlet weak var releaseDateLabel: UILabel!
@@ -41,6 +42,10 @@ class SpecificMovieOrSerieViewController: UIViewController {
     
     var tempData = [DetailedCollectionViewCellModel]()
     var tempData2 = [DetailedCollectionViewCellModel]()
+    
+    var specificMovieOrSerieData: SpecificMovieOrSerieType?
+    
+    let specificMovieOrSerieModel = SpecificMovieOrSerieModel.shared
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -82,7 +87,6 @@ class SpecificMovieOrSerieViewController: UIViewController {
         let cellNib1 = UINib(nibName: "DetailedCollectionViewCell", bundle: nil)
         castCollectionView.register(cellNib1, forCellWithReuseIdentifier: "detailedCollectionViewCell")
         
-        
         let flowLayout2 = UICollectionViewFlowLayout()
         flowLayout2.scrollDirection = .horizontal
         flowLayout2.itemSize = CGSize(width: 150, height: 250)
@@ -92,26 +96,13 @@ class SpecificMovieOrSerieViewController: UIViewController {
         similarsCollectionView.delegate = similarsViewControllerHelper
         let cellNib2 = UINib(nibName: "DetailedCollectionViewCell", bundle: nil)
         similarsCollectionView.register(cellNib2, forCellWithReuseIdentifier: "detailedCollectionViewCell")
-        
-        loadData()  // temporary
     }
     
     override func viewWillAppear(_ animated: Bool) {
-        
-        
-        // temporary start
-        setTitle(title: "Something Very Nice Movie")
-        setReleaseDate(releaseDate: "2010-07-03")
-        setPlotInfo(plotInfo: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.")
-        setGenres(genres: "Science, Action")
-        setDirector(director: "Quentin Tarantino")
-        setWriter(writer: "Luc Besson")
-        setDuration(duration: "150")
-        setImdbRating(rating: "8.8")
-        setMetacriticRating(rating: "78")
-        setThemoviedbRating(rating: "5.2")
-        setRottentomatoesRating(rating: "92")
-        // temporary end
+        if specificMovieOrSerieData == nil {
+            specificMovieOrSerieModel.specificMovieOrSerieDelegate = self
+            specificMovieOrSerieModel.getSpecificMovieOrSerie(id: id)
+        }
     }
     
     @IBAction func trailerPlayClicked(_ sender: UIButton) {
@@ -180,6 +171,22 @@ class SpecificMovieOrSerieViewController: UIViewController {
         durationOrSeasonsLabel.attributedText = attributedSeasonsText
     }
     
+    private func setCast(cast: [ActorListItemType]) {
+        
+    }
+    
+    private func setTrailerImageUrl(trailerImageUrl: String) {
+        
+    }
+    
+    private func setTrailerVideoUrl(trailerVideoUrl: String) {
+        
+    }
+    
+    private func setSimilars(similars: [MovieOrSerieListItemType]) {
+        
+    }
+    
     private func setImdbRating(rating: String) {
         imdbRatingLabel.text = rating
     }
@@ -197,27 +204,55 @@ class SpecificMovieOrSerieViewController: UIViewController {
     }
     
     func loadData(){
-        tempData.append(DetailedCollectionViewCellModel(imageUrl: "https://m.media-amazon.com/images/M/MV5BMjAxMzY3NjcxNF5BMl5BanBnXkFtZTcwNTI5OTM0Mw@@._V1_Ratio0.6791_AL_.jpg", name: "Slvesterr Soetngngttttt"))
-        tempData.append(DetailedCollectionViewCellModel(imageUrl: "https://m.media-amazon.com/images/M/MV5BMWU4N2FjNzYtNTVkNC00NzQ0LTg0MjAtYTJlMjFhNGUxZDFmXkEyXkFqcGdeQXVyNjc1NTYyMjg@._V1_UX128_CR0,3,128,176_AL_.jpg", name: "12 Angry Men"))
-        tempData.append(DetailedCollectionViewCellModel(imageUrl: "https://m.media-amazon.com/images/M/MV5BMWU4N2FjNzYtNTVkNC00NzQ0LTg0MjAtYTJlMjFhNGUxZDFmXkEyXkFqcGdeQXVyNjc1NTYyMjg@._V1_UX128_CR0,3,128,176_AL_.jpg", name: "12 Angry Men"))
-        tempData.append(DetailedCollectionViewCellModel(imageUrl: "https://m.media-amazon.com/images/M/MV5BMjAxMzY3NjcxNF5BMl5BanBnXkFtZTcwNTI5OTM0Mw@@._V1_Ratio0.6791_AL_.jpg", name: "12 Angry Men"))
-        tempData.append(DetailedCollectionViewCellModel(imageUrl: "https://m.media-amazon.com/images/M/MV5BMjAxMzY3NjcxNF5BMl5BanBnXkFtZTcwNTI5OTM0Mw@@._V1_Ratio0.6791_AL_.jpg", name: "12 Angry Men"))
-        tempData.append(DetailedCollectionViewCellModel(imageUrl: "https://m.media-amazon.com/images/M/MV5BMjAxMzY3NjcxNF5BMl5BanBnXkFtZTcwNTI5OTM0Mw@@._V1_Ratio0.6791_AL_.jpg", name: "Slvesterr Soetngngttttt"))
-        tempData.append(DetailedCollectionViewCellModel(imageUrl: "https://m.media-amazon.com/images/M/MV5BMWU4N2FjNzYtNTVkNC00NzQ0LTg0MjAtYTJlMjFhNGUxZDFmXkEyXkFqcGdeQXVyNjc1NTYyMjg@._V1_UX128_CR0,3,128,176_AL_.jpg", name: "12 Angry Men"))
-        tempData.append(DetailedCollectionViewCellModel(imageUrl: "https://m.media-amazon.com/images/M/MV5BMjAxMzY3NjcxNF5BMl5BanBnXkFtZTcwNTI5OTM0Mw@@._V1_Ratio0.6791_AL_.jpg", name: "Slvesterr Soetngngttttt"))
-        tempData.append(DetailedCollectionViewCellModel(imageUrl: "https://m.media-amazon.com/images/M/MV5BMWU4N2FjNzYtNTVkNC00NzQ0LTg0MjAtYTJlMjFhNGUxZDFmXkEyXkFqcGdeQXVyNjc1NTYyMjg@._V1_UX128_CR0,3,128,176_AL_.jpg", name: "12 Angry Men"))
-        tempData.append(DetailedCollectionViewCellModel(imageUrl: "https://m.media-amazon.com/images/M/MV5BMjAxMzY3NjcxNF5BMl5BanBnXkFtZTcwNTI5OTM0Mw@@._V1_Ratio0.6791_AL_.jpg", name: "12 Angry Men"))
-        
-        tempData2.append(DetailedCollectionViewCellModel(imageUrl: "https://m.media-amazon.com/images/M/MV5BMjAxMzY3NjcxNF5BMl5BanBnXkFtZTcwNTI5OTM0Mw@@._V1_Ratio0.6791_AL_.jpg", name: "12 Angry Men"))
-        tempData2.append(DetailedCollectionViewCellModel(imageUrl: "https://m.media-amazon.com/images/M/MV5BMjAxMzY3NjcxNF5BMl5BanBnXkFtZTcwNTI5OTM0Mw@@._V1_Ratio0.6791_AL_.jpg", name: "Something Very Nice Movie Name"))
-        tempData2.append(DetailedCollectionViewCellModel(imageUrl: "https://m.media-amazon.com/images/M/MV5BMjAxMzY3NjcxNF5BMl5BanBnXkFtZTcwNTI5OTM0Mw@@._V1_Ratio0.6791_AL_.jpg", name: "12 Angry Men"))
-        tempData2.append(DetailedCollectionViewCellModel(imageUrl: "https://m.media-amazon.com/images/M/MV5BMjAxMzY3NjcxNF5BMl5BanBnXkFtZTcwNTI5OTM0Mw@@._V1_Ratio0.6791_AL_.jpg", name: "12 Angry Men"))
-        tempData2.append(DetailedCollectionViewCellModel(imageUrl: "https://m.media-amazon.com/images/M/MV5BMjAxMzY3NjcxNF5BMl5BanBnXkFtZTcwNTI5OTM0Mw@@._V1_Ratio0.6791_AL_.jpg", name: "Something Very Nice Movie Name"))
-        tempData2.append(DetailedCollectionViewCellModel(imageUrl: "https://m.media-amazon.com/images/M/MV5BMjAxMzY3NjcxNF5BMl5BanBnXkFtZTcwNTI5OTM0Mw@@._V1_Ratio0.6791_AL_.jpg", name: "12 Angry Men"))
-        tempData2.append(DetailedCollectionViewCellModel(imageUrl: "https://m.media-amazon.com/images/M/MV5BMjAxMzY3NjcxNF5BMl5BanBnXkFtZTcwNTI5OTM0Mw@@._V1_Ratio0.6791_AL_.jpg", name: "Something Very Nice Movie Name"))
+//        tempData.append(DetailedCollectionViewCellModel(imageUrl: "https://m.media-amazon.com/images/M/MV5BMjAxMzY3NjcxNF5BMl5BanBnXkFtZTcwNTI5OTM0Mw@@._V1_Ratio0.6791_AL_.jpg", name: "Slvesterr Soetngngttttt"))
+//        tempData.append(DetailedCollectionViewCellModel(imageUrl: "https://m.media-amazon.com/images/M/MV5BMWU4N2FjNzYtNTVkNC00NzQ0LTg0MjAtYTJlMjFhNGUxZDFmXkEyXkFqcGdeQXVyNjc1NTYyMjg@._V1_UX128_CR0,3,128,176_AL_.jpg", name: "12 Angry Men"))
+//        tempData.append(DetailedCollectionViewCellModel(imageUrl: "https://m.media-amazon.com/images/M/MV5BMWU4N2FjNzYtNTVkNC00NzQ0LTg0MjAtYTJlMjFhNGUxZDFmXkEyXkFqcGdeQXVyNjc1NTYyMjg@._V1_UX128_CR0,3,128,176_AL_.jpg", name: "12 Angry Men"))
+//        tempData.append(DetailedCollectionViewCellModel(imageUrl: "https://m.media-amazon.com/images/M/MV5BMjAxMzY3NjcxNF5BMl5BanBnXkFtZTcwNTI5OTM0Mw@@._V1_Ratio0.6791_AL_.jpg", name: "12 Angry Men"))
+//        tempData.append(DetailedCollectionViewCellModel(imageUrl: "https://m.media-amazon.com/images/M/MV5BMjAxMzY3NjcxNF5BMl5BanBnXkFtZTcwNTI5OTM0Mw@@._V1_Ratio0.6791_AL_.jpg", name: "12 Angry Men"))
+//        tempData.append(DetailedCollectionViewCellModel(imageUrl: "https://m.media-amazon.com/images/M/MV5BMjAxMzY3NjcxNF5BMl5BanBnXkFtZTcwNTI5OTM0Mw@@._V1_Ratio0.6791_AL_.jpg", name: "Slvesterr Soetngngttttt"))
+//        tempData.append(DetailedCollectionViewCellModel(imageUrl: "https://m.media-amazon.com/images/M/MV5BMWU4N2FjNzYtNTVkNC00NzQ0LTg0MjAtYTJlMjFhNGUxZDFmXkEyXkFqcGdeQXVyNjc1NTYyMjg@._V1_UX128_CR0,3,128,176_AL_.jpg", name: "12 Angry Men"))
+//        tempData.append(DetailedCollectionViewCellModel(imageUrl: "https://m.media-amazon.com/images/M/MV5BMjAxMzY3NjcxNF5BMl5BanBnXkFtZTcwNTI5OTM0Mw@@._V1_Ratio0.6791_AL_.jpg", name: "Slvesterr Soetngngttttt"))
+//        tempData.append(DetailedCollectionViewCellModel(imageUrl: "https://m.media-amazon.com/images/M/MV5BMWU4N2FjNzYtNTVkNC00NzQ0LTg0MjAtYTJlMjFhNGUxZDFmXkEyXkFqcGdeQXVyNjc1NTYyMjg@._V1_UX128_CR0,3,128,176_AL_.jpg", name: "12 Angry Men"))
+//        tempData.append(DetailedCollectionViewCellModel(imageUrl: "https://m.media-amazon.com/images/M/MV5BMjAxMzY3NjcxNF5BMl5BanBnXkFtZTcwNTI5OTM0Mw@@._V1_Ratio0.6791_AL_.jpg", name: "12 Angry Men"))
+//        
+//        tempData2.append(DetailedCollectionViewCellModel(imageUrl: "https://m.media-amazon.com/images/M/MV5BMjAxMzY3NjcxNF5BMl5BanBnXkFtZTcwNTI5OTM0Mw@@._V1_Ratio0.6791_AL_.jpg", name: "12 Angry Men"))
+//        tempData2.append(DetailedCollectionViewCellModel(imageUrl: "https://m.media-amazon.com/images/M/MV5BMjAxMzY3NjcxNF5BMl5BanBnXkFtZTcwNTI5OTM0Mw@@._V1_Ratio0.6791_AL_.jpg", name: "Something Very Nice Movie Name"))
+//        tempData2.append(DetailedCollectionViewCellModel(imageUrl: "https://m.media-amazon.com/images/M/MV5BMjAxMzY3NjcxNF5BMl5BanBnXkFtZTcwNTI5OTM0Mw@@._V1_Ratio0.6791_AL_.jpg", name: "12 Angry Men"))
+//        tempData2.append(DetailedCollectionViewCellModel(imageUrl: "https://m.media-amazon.com/images/M/MV5BMjAxMzY3NjcxNF5BMl5BanBnXkFtZTcwNTI5OTM0Mw@@._V1_Ratio0.6791_AL_.jpg", name: "12 Angry Men"))
+//        tempData2.append(DetailedCollectionViewCellModel(imageUrl: "https://m.media-amazon.com/images/M/MV5BMjAxMzY3NjcxNF5BMl5BanBnXkFtZTcwNTI5OTM0Mw@@._V1_Ratio0.6791_AL_.jpg", name: "Something Very Nice Movie Name"))
+//        tempData2.append(DetailedCollectionViewCellModel(imageUrl: "https://m.media-amazon.com/images/M/MV5BMjAxMzY3NjcxNF5BMl5BanBnXkFtZTcwNTI5OTM0Mw@@._V1_Ratio0.6791_AL_.jpg", name: "12 Angry Men"))
+//        tempData2.append(DetailedCollectionViewCellModel(imageUrl: "https://m.media-amazon.com/images/M/MV5BMjAxMzY3NjcxNF5BMl5BanBnXkFtZTcwNTI5OTM0Mw@@._V1_Ratio0.6791_AL_.jpg", name: "Something Very Nice Movie Name"))
         
         castViewControllerHelper?.updateData(data: tempData)
         similarsViewControllerHelper?.updateData(data: tempData2)
+    }
+}
+
+extension SpecificMovieOrSerieViewController: SpecificMovieOrSerieDelegate {
+    func onSpecificMovieOrSerieReceived(specificMovieOrSerie: SpecificMovieOrSerieType) {
+        setTitle(title: specificMovieOrSerie.title)
+        setReleaseDate(releaseDate: specificMovieOrSerie.releaseDate)
+        setPlotInfo(plotInfo: specificMovieOrSerie.plotInfo)
+        setGenres(genres: specificMovieOrSerie.genres)
+        setDirector(director: specificMovieOrSerie.director)
+        setWriter(writer: specificMovieOrSerie.writer)
+        if fromMovie {
+            setDuration(duration: specificMovieOrSerie.durationOrSeasons)
+        }
+        else {
+            setSeasons(seasons: specificMovieOrSerie.durationOrSeasons)
+        }
+        setCast(cast: specificMovieOrSerie.cast)
+        setTrailerImageUrl(trailerImageUrl: specificMovieOrSerie.trailerImageUrl)
+        setTrailerVideoUrl(trailerVideoUrl: specificMovieOrSerie.trailerVideoUrl)
+        setImdbRating(rating: specificMovieOrSerie.imdbRating)
+        setMetacriticRating(rating: specificMovieOrSerie.metacriticRating)
+        setThemoviedbRating(rating: specificMovieOrSerie.themoviedbRating)
+        setRottentomatoesRating(rating: specificMovieOrSerie.rottentomatoesRating)
+        setSimilars(similars: specificMovieOrSerie.similars)
+
+        title = specificMovieOrSerie.title
+        specificMovieOrSerieData = specificMovieOrSerie
     }
 }
 

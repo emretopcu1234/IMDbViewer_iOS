@@ -146,9 +146,9 @@
                         <color key="backgroundColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <constraints>
                             <constraint firstItem="nPz-dM-fnG" firstAttribute="leading" secondItem="vPV-2W-9dh" secondAttribute="leading" id="3yL-3R-oOZ"/>
-                            <constraint firstItem="vPV-2W-9dh" firstAttribute="bottom" secondItem="nPz-dM-fnG" secondAttribute="bottom" constant="20" id="GFW-Ex-8H7"/>
+                            <constraint firstAttribute="bottom" secondItem="nPz-dM-fnG" secondAttribute="bottom" constant="20" id="GFW-Ex-8H7"/>
                             <constraint firstItem="vPV-2W-9dh" firstAttribute="trailing" secondItem="nPz-dM-fnG" secondAttribute="trailing" id="QCY-9t-O8R"/>
-                            <constraint firstItem="nPz-dM-fnG" firstAttribute="top" secondItem="vPV-2W-9dh" secondAttribute="top" id="koS-2y-Vir"/>
+                            <constraint firstItem="nPz-dM-fnG" firstAttribute="top" secondItem="kT0-oA-QaO" secondAttribute="top" id="koS-2y-Vir"/>
                         </constraints>
                     </view>
                     <navigationItem key="navigationItem" title="Series" id="WyZ-Ee-bd4"/>

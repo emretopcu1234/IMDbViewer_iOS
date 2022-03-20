@@ -13,11 +13,13 @@ struct GeneralTableViewCellModel {
 }
 
 struct GeneralCollectionViewCellModel {
+    var id: String
     var imageUrl: String
     var name: String
 }
 
 struct DetailedCollectionViewCellModel {
+    var id: String
     var imageUrl: String
     var name: String
 }

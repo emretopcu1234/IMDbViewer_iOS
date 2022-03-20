@@ -35,4 +35,4 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 }
 
 // TODO LIST:
-// movies model'daki get initial data icerisindeki todo'lar yapılacak. (delegation vb olusturulup view'a bilgi akacak, view listeye gore ekrana yansıtacak.)
+// specificmovieorserieviewcontroller'da yeni olusturulan 4 private metodu doldur, zaten model'dan su an bilgiler geliyor (ama kontrol edilmedi), o metodlar dolunca eger hata yoksa direkt olarak view'da sergilenmesi gerekir.
