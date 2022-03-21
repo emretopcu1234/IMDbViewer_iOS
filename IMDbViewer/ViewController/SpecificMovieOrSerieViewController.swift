@@ -6,11 +6,12 @@
 //
 
 import UIKit
+import AVKit
+import AVFoundation
 
 class SpecificMovieOrSerieViewController: UIViewController {
 
     var id: String = ""
-    var fromMovie: Bool = true
     
     @IBOutlet weak var titleLabel: UILabel!
     @IBOutlet weak var releaseDateLabel: UILabel!
@@ -34,15 +35,13 @@ class SpecificMovieOrSerieViewController: UIViewController {
     @IBOutlet weak var similarsLabel: UILabel!
     @IBOutlet weak var similarsCollectionView: UICollectionView!
     
+    var trailerVideoUrl: String?
+    
     var starFilledButton: UIBarButtonItem?
     var starUnfilledButton: UIBarButtonItem?
     
     var castViewControllerHelper: CastCollectionViewHelper?
     var similarsViewControllerHelper: SimilarsCollectionViewHelper?
-    
-    var tempData = [DetailedCollectionViewCellModel]()
-    var tempData2 = [DetailedCollectionViewCellModel]()
-    
     var specificMovieOrSerieData: SpecificMovieOrSerieType?
     
     let specificMovieOrSerieModel = SpecificMovieOrSerieModel.shared
@@ -81,7 +80,7 @@ class SpecificMovieOrSerieViewController: UIViewController {
         flowLayout1.scrollDirection = .horizontal
         flowLayout1.itemSize = CGSize(width: 150, height: 250)
         castCollectionView.collectionViewLayout = flowLayout1
-        castViewControllerHelper = CastCollectionViewHelper(collectionView: castCollectionView)
+        castViewControllerHelper = CastCollectionViewHelper(viewController: self, collectionView: castCollectionView)
         castCollectionView.dataSource = castViewControllerHelper
         castCollectionView.delegate = castViewControllerHelper
         let cellNib1 = UINib(nibName: "DetailedCollectionViewCell", bundle: nil)
@@ -91,7 +90,7 @@ class SpecificMovieOrSerieViewController: UIViewController {
         flowLayout2.scrollDirection = .horizontal
         flowLayout2.itemSize = CGSize(width: 150, height: 250)
         similarsCollectionView.collectionViewLayout = flowLayout2
-        similarsViewControllerHelper = SimilarsCollectionViewHelper(collectionView: similarsCollectionView)
+        similarsViewControllerHelper = SimilarsCollectionViewHelper(viewController: self, collectionView: similarsCollectionView)
         similarsCollectionView.dataSource = similarsViewControllerHelper
         similarsCollectionView.delegate = similarsViewControllerHelper
         let cellNib2 = UINib(nibName: "DetailedCollectionViewCell", bundle: nil)
@@ -99,24 +98,25 @@ class SpecificMovieOrSerieViewController: UIViewController {
     }
     
     override func viewWillAppear(_ animated: Bool) {
-        if specificMovieOrSerieData == nil {
-            specificMovieOrSerieModel.specificMovieOrSerieDelegate = self
-            specificMovieOrSerieModel.getSpecificMovieOrSerie(id: id)
-        }
+        specificMovieOrSerieModel.specificMovieOrSerieDelegate = self
+        specificMovieOrSerieModel.getSpecificMovieOrSerie(id: id)
     }
     
     @IBAction func trailerPlayClicked(_ sender: UIButton) {
-        let vc = UIStoryboard.init(name: "Main", bundle: Bundle.main).instantiateViewController(withIdentifier: "specificActorViewController") as? SpecificActorViewController
-        navigationItem.backBarButtonItem = UIBarButtonItem(
-            title: "Very Back", style: .plain, target: nil, action: nil)
-        navigationController?.pushViewController(vc!, animated: true)
+        guard let url = URL(string: trailerVideoUrl ?? "") else { return }
+        let player = AVPlayer(url: url)
+        let controller = AVPlayerViewController()
+        controller.player = player
+        present(controller, animated: true) {
+            player.play()
+        }
     }
     
-    @objc func addToFavorites(sender: AnyObject) {
+    @objc private func addToFavorites(sender: AnyObject) {
         navigationItem.rightBarButtonItem = starFilledButton
     }
     
-    @objc func removeFromFavorites(sender: AnyObject) {
+    @objc private func removeFromFavorites(sender: AnyObject) {
         navigationItem.rightBarButtonItem = starUnfilledButton
     }
     
@@ -172,19 +172,33 @@ class SpecificMovieOrSerieViewController: UIViewController {
     }
     
     private func setCast(cast: [ActorListItemType]) {
-        
+        var data = [DetailedCollectionViewCellModel]()
+        for castActor in cast {
+            data.append(DetailedCollectionViewCellModel(id: castActor.id, imageUrl: castActor.image, name: castActor.name))
+        }
+        castViewControllerHelper?.updateData(data: data)
     }
     
     private func setTrailerImageUrl(trailerImageUrl: String) {
-        
+        let url = URL(string: trailerImageUrl)
+        DispatchQueue.global().async {
+            let data = try? Data(contentsOf: url!)
+            DispatchQueue.main.async {
+                self.trailerImageView.image = UIImage(data: data!)
+            }
+        }
     }
     
     private func setTrailerVideoUrl(trailerVideoUrl: String) {
-        
+        self.trailerVideoUrl = trailerVideoUrl
     }
     
     private func setSimilars(similars: [MovieOrSerieListItemType]) {
-        
+        var data = [DetailedCollectionViewCellModel]()
+        for similar in similars {
+            data.append(DetailedCollectionViewCellModel(id: similar.id, imageUrl: similar.image, name: similar.title))
+        }
+        similarsViewControllerHelper?.updateData(data: data)
     }
     
     private func setImdbRating(rating: String) {
@@ -203,64 +217,54 @@ class SpecificMovieOrSerieViewController: UIViewController {
         rottentomatoesRatingLabel.text = rating
     }
     
-    func loadData(){
-//        tempData.append(DetailedCollectionViewCellModel(imageUrl: "https://m.media-amazon.com/images/M/MV5BMjAxMzY3NjcxNF5BMl5BanBnXkFtZTcwNTI5OTM0Mw@@._V1_Ratio0.6791_AL_.jpg", name: "Slvesterr Soetngngttttt"))
-//        tempData.append(DetailedCollectionViewCellModel(imageUrl: "https://m.media-amazon.com/images/M/MV5BMWU4N2FjNzYtNTVkNC00NzQ0LTg0MjAtYTJlMjFhNGUxZDFmXkEyXkFqcGdeQXVyNjc1NTYyMjg@._V1_UX128_CR0,3,128,176_AL_.jpg", name: "12 Angry Men"))
-//        tempData.append(DetailedCollectionViewCellModel(imageUrl: "https://m.media-amazon.com/images/M/MV5BMWU4N2FjNzYtNTVkNC00NzQ0LTg0MjAtYTJlMjFhNGUxZDFmXkEyXkFqcGdeQXVyNjc1NTYyMjg@._V1_UX128_CR0,3,128,176_AL_.jpg", name: "12 Angry Men"))
-//        tempData.append(DetailedCollectionViewCellModel(imageUrl: "https://m.media-amazon.com/images/M/MV5BMjAxMzY3NjcxNF5BMl5BanBnXkFtZTcwNTI5OTM0Mw@@._V1_Ratio0.6791_AL_.jpg", name: "12 Angry Men"))
-//        tempData.append(DetailedCollectionViewCellModel(imageUrl: "https://m.media-amazon.com/images/M/MV5BMjAxMzY3NjcxNF5BMl5BanBnXkFtZTcwNTI5OTM0Mw@@._V1_Ratio0.6791_AL_.jpg", name: "12 Angry Men"))
-//        tempData.append(DetailedCollectionViewCellModel(imageUrl: "https://m.media-amazon.com/images/M/MV5BMjAxMzY3NjcxNF5BMl5BanBnXkFtZTcwNTI5OTM0Mw@@._V1_Ratio0.6791_AL_.jpg", name: "Slvesterr Soetngngttttt"))
-//        tempData.append(DetailedCollectionViewCellModel(imageUrl: "https://m.media-amazon.com/images/M/MV5BMWU4N2FjNzYtNTVkNC00NzQ0LTg0MjAtYTJlMjFhNGUxZDFmXkEyXkFqcGdeQXVyNjc1NTYyMjg@._V1_UX128_CR0,3,128,176_AL_.jpg", name: "12 Angry Men"))
-//        tempData.append(DetailedCollectionViewCellModel(imageUrl: "https://m.media-amazon.com/images/M/MV5BMjAxMzY3NjcxNF5BMl5BanBnXkFtZTcwNTI5OTM0Mw@@._V1_Ratio0.6791_AL_.jpg", name: "Slvesterr Soetngngttttt"))
-//        tempData.append(DetailedCollectionViewCellModel(imageUrl: "https://m.media-amazon.com/images/M/MV5BMWU4N2FjNzYtNTVkNC00NzQ0LTg0MjAtYTJlMjFhNGUxZDFmXkEyXkFqcGdeQXVyNjc1NTYyMjg@._V1_UX128_CR0,3,128,176_AL_.jpg", name: "12 Angry Men"))
-//        tempData.append(DetailedCollectionViewCellModel(imageUrl: "https://m.media-amazon.com/images/M/MV5BMjAxMzY3NjcxNF5BMl5BanBnXkFtZTcwNTI5OTM0Mw@@._V1_Ratio0.6791_AL_.jpg", name: "12 Angry Men"))
-//        
-//        tempData2.append(DetailedCollectionViewCellModel(imageUrl: "https://m.media-amazon.com/images/M/MV5BMjAxMzY3NjcxNF5BMl5BanBnXkFtZTcwNTI5OTM0Mw@@._V1_Ratio0.6791_AL_.jpg", name: "12 Angry Men"))
-//        tempData2.append(DetailedCollectionViewCellModel(imageUrl: "https://m.media-amazon.com/images/M/MV5BMjAxMzY3NjcxNF5BMl5BanBnXkFtZTcwNTI5OTM0Mw@@._V1_Ratio0.6791_AL_.jpg", name: "Something Very Nice Movie Name"))
-//        tempData2.append(DetailedCollectionViewCellModel(imageUrl: "https://m.media-amazon.com/images/M/MV5BMjAxMzY3NjcxNF5BMl5BanBnXkFtZTcwNTI5OTM0Mw@@._V1_Ratio0.6791_AL_.jpg", name: "12 Angry Men"))
-//        tempData2.append(DetailedCollectionViewCellModel(imageUrl: "https://m.media-amazon.com/images/M/MV5BMjAxMzY3NjcxNF5BMl5BanBnXkFtZTcwNTI5OTM0Mw@@._V1_Ratio0.6791_AL_.jpg", name: "12 Angry Men"))
-//        tempData2.append(DetailedCollectionViewCellModel(imageUrl: "https://m.media-amazon.com/images/M/MV5BMjAxMzY3NjcxNF5BMl5BanBnXkFtZTcwNTI5OTM0Mw@@._V1_Ratio0.6791_AL_.jpg", name: "Something Very Nice Movie Name"))
-//        tempData2.append(DetailedCollectionViewCellModel(imageUrl: "https://m.media-amazon.com/images/M/MV5BMjAxMzY3NjcxNF5BMl5BanBnXkFtZTcwNTI5OTM0Mw@@._V1_Ratio0.6791_AL_.jpg", name: "12 Angry Men"))
-//        tempData2.append(DetailedCollectionViewCellModel(imageUrl: "https://m.media-amazon.com/images/M/MV5BMjAxMzY3NjcxNF5BMl5BanBnXkFtZTcwNTI5OTM0Mw@@._V1_Ratio0.6791_AL_.jpg", name: "Something Very Nice Movie Name"))
-        
-        castViewControllerHelper?.updateData(data: tempData)
-        similarsViewControllerHelper?.updateData(data: tempData2)
+    fileprivate func navigateToSpecificActor(id: String) {
+        let vc = UIStoryboard.init(name: "Main", bundle: Bundle.main).instantiateViewController(withIdentifier: "specificActorViewController") as? SpecificActorViewController
+        vc?.id = id
+        navigationController?.pushViewController(vc!, animated: true)
+    }
+    
+    fileprivate func navigateToSpecificMovieOrSerie(id: String) {
+        let vc = UIStoryboard.init(name: "Main", bundle: Bundle.main).instantiateViewController(withIdentifier: "specificMovieOrSerieViewController") as? SpecificMovieOrSerieViewController
+        vc?.id = id
+        navigationController?.pushViewController(vc!, animated: true)
     }
 }
 
 extension SpecificMovieOrSerieViewController: SpecificMovieOrSerieDelegate {
     func onSpecificMovieOrSerieReceived(specificMovieOrSerie: SpecificMovieOrSerieType) {
-        setTitle(title: specificMovieOrSerie.title)
-        setReleaseDate(releaseDate: specificMovieOrSerie.releaseDate)
-        setPlotInfo(plotInfo: specificMovieOrSerie.plotInfo)
-        setGenres(genres: specificMovieOrSerie.genres)
-        setDirector(director: specificMovieOrSerie.director)
-        setWriter(writer: specificMovieOrSerie.writer)
-        if fromMovie {
-            setDuration(duration: specificMovieOrSerie.durationOrSeasons)
+        DispatchQueue.main.async { [self] in
+            setTitle(title: specificMovieOrSerie.title)
+            setReleaseDate(releaseDate: specificMovieOrSerie.releaseDate)
+            setPlotInfo(plotInfo: specificMovieOrSerie.plotInfo)
+            setGenres(genres: specificMovieOrSerie.genres)
+            setDirector(director: specificMovieOrSerie.director)
+            setWriter(writer: specificMovieOrSerie.writer)
+            if let duration = specificMovieOrSerie.duration {
+                setDuration(duration: duration)
+            }
+            else if let seasons = specificMovieOrSerie.seasons {
+                setSeasons(seasons: seasons)
+            }
+            setCast(cast: specificMovieOrSerie.cast)
+            setTrailerImageUrl(trailerImageUrl: specificMovieOrSerie.trailerImageUrl)
+            setTrailerVideoUrl(trailerVideoUrl: specificMovieOrSerie.trailerVideoUrl)
+            setImdbRating(rating: specificMovieOrSerie.imdbRating)
+            setMetacriticRating(rating: specificMovieOrSerie.metacriticRating)
+            setThemoviedbRating(rating: specificMovieOrSerie.themoviedbRating)
+            setRottentomatoesRating(rating: specificMovieOrSerie.rottentomatoesRating)
+            setSimilars(similars: specificMovieOrSerie.similars)
         }
-        else {
-            setSeasons(seasons: specificMovieOrSerie.durationOrSeasons)
-        }
-        setCast(cast: specificMovieOrSerie.cast)
-        setTrailerImageUrl(trailerImageUrl: specificMovieOrSerie.trailerImageUrl)
-        setTrailerVideoUrl(trailerVideoUrl: specificMovieOrSerie.trailerVideoUrl)
-        setImdbRating(rating: specificMovieOrSerie.imdbRating)
-        setMetacriticRating(rating: specificMovieOrSerie.metacriticRating)
-        setThemoviedbRating(rating: specificMovieOrSerie.themoviedbRating)
-        setRottentomatoesRating(rating: specificMovieOrSerie.rottentomatoesRating)
-        setSimilars(similars: specificMovieOrSerie.similars)
-
-        title = specificMovieOrSerie.title
         specificMovieOrSerieData = specificMovieOrSerie
     }
 }
 
 class CastCollectionViewHelper: NSObject, UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
-    var collectionViewData =  [DetailedCollectionViewCellModel]()
+    let viewController: SpecificMovieOrSerieViewController
     let collectionView: UICollectionView
+    var collectionViewData =  [DetailedCollectionViewCellModel]()
     
-    init(collectionView: UICollectionView) {
+    init(viewController: SpecificMovieOrSerieViewController, collectionView: UICollectionView) {
+        self.viewController = viewController
         self.collectionView = collectionView
     }
     
@@ -297,17 +301,17 @@ class CastCollectionViewHelper: NSObject, UICollectionViewDelegate, UICollection
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        let name = collectionViewData[indexPath.row].name
-        print("You tapped the item \(name)")
-        print("cast collection view tapped")
+        viewController.navigateToSpecificActor(id: collectionViewData[indexPath.row].id)
     }
 }
 
 class SimilarsCollectionViewHelper: NSObject, UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
-    var collectionViewData = [DetailedCollectionViewCellModel]()
+    let viewController: SpecificMovieOrSerieViewController
     let collectionView: UICollectionView
+    var collectionViewData = [DetailedCollectionViewCellModel]()
     
-    init(collectionView: UICollectionView) {
+    init(viewController: SpecificMovieOrSerieViewController, collectionView: UICollectionView) {
+        self.viewController = viewController
         self.collectionView = collectionView
     }
     
@@ -344,8 +348,6 @@ class SimilarsCollectionViewHelper: NSObject, UICollectionViewDelegate, UICollec
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        let name = collectionViewData[indexPath.row].name
-        print("You tapped the item \(name)")
-        print("similars collection view tapped")
+        viewController.navigateToSpecificMovieOrSerie(id: collectionViewData[indexPath.row].id)
     }
 }

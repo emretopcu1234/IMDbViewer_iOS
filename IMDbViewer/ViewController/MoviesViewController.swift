@@ -146,7 +146,6 @@ extension MoviesViewController: GeneralCollectionViewCellDelegate {
             if data.title == title {
                 let vc = UIStoryboard.init(name: "Main", bundle: Bundle.main).instantiateViewController(withIdentifier: "specificMovieOrSerieViewController") as? SpecificMovieOrSerieViewController
                 vc?.id = data.items[index].id
-                vc?.fromMovie = true
                 navigationController?.pushViewController(vc!, animated: true)
                 break
             }

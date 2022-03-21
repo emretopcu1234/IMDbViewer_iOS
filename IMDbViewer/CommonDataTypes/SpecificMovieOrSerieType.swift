@@ -14,7 +14,8 @@ struct SpecificMovieOrSerieType {
     var genres: String
     var director: String
     var writer: String
-    var durationOrSeasons: String
+    var duration: String?
+    var seasons: String?
     var cast: [ActorListItemType]
     var trailerImageUrl: String
     var trailerVideoUrl: String
@@ -31,7 +32,6 @@ struct SpecificMovieOrSerieType {
         genres = ""
         director = ""
         writer = ""
-        durationOrSeasons = ""
         cast = [ActorListItemType]()
         trailerImageUrl = ""
         trailerVideoUrl = ""

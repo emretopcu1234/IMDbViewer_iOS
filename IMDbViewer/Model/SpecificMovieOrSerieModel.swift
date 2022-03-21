@@ -11,13 +11,18 @@ class SpecificMovieOrSerieModel {
     
     static let shared = SpecificMovieOrSerieModel()
     var specificMovieOrSerieDelegate: SpecificMovieOrSerieDelegate?
-    var specificMovieOrSerie: SpecificMovieOrSerieType
+    var specificMovieOrSerieHistory = [String: SpecificMovieOrSerieType]()
     
     private init() {
-        specificMovieOrSerie = SpecificMovieOrSerieType()
     }
     
     func getSpecificMovieOrSerie(id: String) {
+        if let specificMovieOrSerie = specificMovieOrSerieHistory[id]{
+            specificMovieOrSerieDelegate?.onSpecificMovieOrSerieReceived(specificMovieOrSerie: specificMovieOrSerie)
+            return
+        }
+        
+        var specificMovieOrSerie = SpecificMovieOrSerieType()
         var mainInfoReceived = false
         var videoUrlReceived = false
         
@@ -37,10 +42,12 @@ class SpecificMovieOrSerieModel {
                             specificMovieOrSerie.director = decodedData.directors
                             specificMovieOrSerie.writer = decodedData.writers
                             if let duration = decodedData.runtimeMins {
-                                specificMovieOrSerie.durationOrSeasons = duration
+                                specificMovieOrSerie.duration = duration
+                                specificMovieOrSerie.seasons = nil
                             }
                             else if let seasons = decodedData.tvSeriesInfo?.seasons.count {
-                                specificMovieOrSerie.durationOrSeasons = String(seasons)
+                                specificMovieOrSerie.seasons = String(seasons)
+                                specificMovieOrSerie.duration = nil
                             }
                             var actorList = [ActorListItemType]()
                             for actorr in decodedData.actorList {
@@ -59,6 +66,7 @@ class SpecificMovieOrSerieModel {
                             specificMovieOrSerie.similars = similarList
                             mainInfoReceived = true
                             if videoUrlReceived {
+                                specificMovieOrSerieHistory[id] = specificMovieOrSerie
                                 specificMovieOrSerieDelegate?.onSpecificMovieOrSerieReceived(specificMovieOrSerie: specificMovieOrSerie)
                             }
                         }
@@ -90,9 +98,12 @@ class SpecificMovieOrSerieModel {
                                             let decoder = JSONDecoder()
                                             do {
                                                 let decodedData = try decoder.decode(ApiSpecificMovieOrSerieVideoType2.self, from: data)
-                                                specificMovieOrSerie.trailerVideoUrl = decodedData.videos[decodedData.videos.count - 1].url
+                                                if decodedData.videos.count > 0 {
+                                                    specificMovieOrSerie.trailerVideoUrl = decodedData.videos[decodedData.videos.count - 1].url
+                                                }
                                                 videoUrlReceived = true
                                                 if mainInfoReceived {
+                                                    specificMovieOrSerieHistory[id] = specificMovieOrSerie
                                                     specificMovieOrSerieDelegate?.onSpecificMovieOrSerieReceived(specificMovieOrSerie: specificMovieOrSerie)
                                                 }
                                             }

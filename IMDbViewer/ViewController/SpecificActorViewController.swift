@@ -8,6 +8,8 @@
 import UIKit
 
 class SpecificActorViewController: UIViewController {
+    
+    var id: String = ""
 
     @IBOutlet weak var titleLabel: UILabel!
     @IBOutlet weak var imageView: UIImageView!
