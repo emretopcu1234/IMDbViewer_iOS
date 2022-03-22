@@ -19,8 +19,6 @@ class AllInfoViewController: UIViewController {
         super.viewDidLoad()
         
         navigationItem.titleView = UIView()
-        searchController.searchBar.delegate = self
-        navigationItem.searchController = searchController
         navigationController?.hidesBarsOnSwipe = false
         
         cellWidth = (Int(UIScreen.main.bounds.width) - Int(ViewConstants.spacingBetweenGeneralCells) * (ViewConstants.numberOfItemsInRow + 1)) / ViewConstants.numberOfItemsInRow
@@ -37,19 +35,12 @@ class AllInfoViewController: UIViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         title = data?.title
-        searchController.searchBar.tintColor = UIColor.lightGray
-        searchController.searchBar.searchTextField.backgroundColor = UIColor(named: "DarkGray")
-        searchController.searchBar.searchTextField.textColor = UIColor.lightGray
-    }
-}
-
-extension AllInfoViewController: UISearchBarDelegate {
-    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
-        // TODO arama sonucları ekrana yansıtılacak
     }
     
-    func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
-        // TODO eger daha onceden yapılmıs arama varsa, sonucları ekrandan silinecek.
+    fileprivate func navigateToSpecificMovieOrSerie(id: String) {
+        let vc = UIStoryboard.init(name: "Main", bundle: Bundle.main).instantiateViewController(withIdentifier: "specificMovieOrSerieViewController") as? SpecificMovieOrSerieViewController
+        vc?.id = id
+        navigationController?.pushViewController(vc!, animated: true)
     }
 }
 
@@ -97,5 +88,9 @@ extension AllInfoViewController: UICollectionViewDelegate, UICollectionViewDataS
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
         return UIEdgeInsets(top: 0, left: ViewConstants.spacingBetweenGeneralCells, bottom: ViewConstants.spacingBetweenGeneralCells, right: ViewConstants.spacingBetweenGeneralCells)
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        navigateToSpecificMovieOrSerie(id: data?.items[indexPath.row].id ?? "")
     }
 }

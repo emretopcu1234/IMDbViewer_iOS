@@ -19,6 +19,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         catch {
             print("Setting category to AVAudioSessionCategoryPlayback failed.")
         }
+        
+        UITextField.appearance().keyboardAppearance = UIKeyboardAppearance.dark
         return true
     }
 

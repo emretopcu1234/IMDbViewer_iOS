@@ -42,7 +42,6 @@ class SpecificMovieOrSerieViewController: UIViewController {
     
     var castViewControllerHelper: CastCollectionViewHelper?
     var similarsViewControllerHelper: SimilarsCollectionViewHelper?
-    var specificMovieOrSerieData: SpecificMovieOrSerieType?
     
     let specificMovieOrSerieModel = SpecificMovieOrSerieModel.shared
     
@@ -254,14 +253,13 @@ extension SpecificMovieOrSerieViewController: SpecificMovieOrSerieDelegate {
             setRottentomatoesRating(rating: specificMovieOrSerie.rottentomatoesRating)
             setSimilars(similars: specificMovieOrSerie.similars)
         }
-        specificMovieOrSerieData = specificMovieOrSerie
     }
 }
 
 class CastCollectionViewHelper: NSObject, UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
     let viewController: SpecificMovieOrSerieViewController
     let collectionView: UICollectionView
-    var collectionViewData =  [DetailedCollectionViewCellModel]()
+    var collectionViewData = [DetailedCollectionViewCellModel]()
     
     init(viewController: SpecificMovieOrSerieViewController, collectionView: UICollectionView) {
         self.viewController = viewController

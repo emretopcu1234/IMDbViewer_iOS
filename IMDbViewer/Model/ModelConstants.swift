@@ -20,4 +20,5 @@ class ModelConstants {
     static let SPECIFIC_MOVIE_OR_SERIE_MAIN_EXT2 = "Trailer,Ratings/"
     static let SPECIFIC_MOVIE_OR_SERIE_VIDEO_EXT1 = "YouTubeTrailer/"
     static let SPECIFIC_MOVIE_OR_SERIE_VIDEO_EXT2 = "YouTube/"
+    static let SPECIFIC_ACTOR_EXT = "Name/"
 }
