@@ -9,6 +9,7 @@ import Foundation
 
 struct ApiSpecificMovieOrSerieMainType: Codable {
     var title: String
+    var image: String
     var releaseDate: String
     var runtimeMins: String?
     var plot: String

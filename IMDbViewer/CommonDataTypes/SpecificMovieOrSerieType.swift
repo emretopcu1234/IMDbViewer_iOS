@@ -9,6 +9,7 @@ import Foundation
 
 struct SpecificMovieOrSerieType {
     var title: String
+    var image: String
     var releaseDate: String
     var plotInfo: String
     var genres: String
@@ -27,6 +28,7 @@ struct SpecificMovieOrSerieType {
     
     init() {
         title = ""
+        image = ""
         releaseDate = ""
         plotInfo = ""
         genres = ""

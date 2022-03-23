@@ -113,10 +113,12 @@ class SpecificMovieOrSerieViewController: UIViewController {
     
     @objc private func addToFavorites(sender: AnyObject) {
         navigationItem.rightBarButtonItem = starFilledButton
+        specificMovieOrSerieModel.addToFavorites(id: id)
     }
     
     @objc private func removeFromFavorites(sender: AnyObject) {
         navigationItem.rightBarButtonItem = starUnfilledButton
+        specificMovieOrSerieModel.removeFromFavorites(id: id)
     }
     
     private func setTitle(title: String) {

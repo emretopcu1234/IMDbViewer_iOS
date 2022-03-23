@@ -10,10 +10,12 @@ import Foundation
 class SpecificMovieOrSerieModel {
     
     static let shared = SpecificMovieOrSerieModel()
+    let favoritesModel: FavoritesModel
     var specificMovieOrSerieDelegate: SpecificMovieOrSerieDelegate?
     var specificMovieOrSerieHistory = [String: SpecificMovieOrSerieType]()
     
     private init() {
+        favoritesModel = FavoritesModel.shared
     }
     
     func getSpecificMovieOrSerie(id: String) {
@@ -36,6 +38,7 @@ class SpecificMovieOrSerieModel {
                         do {
                             let decodedData = try decoder.decode(ApiSpecificMovieOrSerieMainType.self, from: data)
                             specificMovieOrSerie.title = decodedData.title
+                            specificMovieOrSerie.image = decodedData.image
                             specificMovieOrSerie.releaseDate = decodedData.releaseDate
                             specificMovieOrSerie.plotInfo = decodedData.plot
                             specificMovieOrSerie.genres = decodedData.genres
@@ -124,5 +127,16 @@ class SpecificMovieOrSerieModel {
             }
             task2.resume()
         }
+    }
+    
+    func addToFavorites(id: String) {
+        if let specificMovieOrSerie = specificMovieOrSerieHistory[id] {
+            let item = MovieOrSerieListItemType(id: id, title: specificMovieOrSerie.title, image: specificMovieOrSerie.image)
+            favoritesModel.addToFavorites(item: item)
+        }
+    }
+    
+    func removeFromFavorites(id: String) {
+        favoritesModel.removeFromFavorites(id: id)
     }
 }
