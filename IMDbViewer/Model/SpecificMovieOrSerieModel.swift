@@ -25,6 +25,12 @@ class SpecificMovieOrSerieModel {
         }
         
         var specificMovieOrSerie = SpecificMovieOrSerieType()
+        for item in favoritesModel.favoritesList {
+            if item.id == id {
+                specificMovieOrSerie.setFavorite(isFavorite: true)
+                break
+            }
+        }
         var mainInfoReceived = false
         var videoUrlReceived = false
         
@@ -130,6 +136,7 @@ class SpecificMovieOrSerieModel {
     }
     
     func addToFavorites(id: String) {
+        specificMovieOrSerieHistory[id]?.setFavorite(isFavorite: true)
         if let specificMovieOrSerie = specificMovieOrSerieHistory[id] {
             let item = MovieOrSerieListItemType(id: id, title: specificMovieOrSerie.title, image: specificMovieOrSerie.image)
             favoritesModel.addToFavorites(item: item)
@@ -137,6 +144,8 @@ class SpecificMovieOrSerieModel {
     }
     
     func removeFromFavorites(id: String) {
+        specificMovieOrSerieHistory[id]?.setFavorite(isFavorite: false)
         favoritesModel.removeFromFavorites(id: id)
+        
     }
 }

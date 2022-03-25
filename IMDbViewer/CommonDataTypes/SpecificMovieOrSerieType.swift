@@ -8,6 +8,7 @@
 import Foundation
 
 struct SpecificMovieOrSerieType {
+    var isFavorite: Bool
     var title: String
     var image: String
     var releaseDate: String
@@ -27,6 +28,7 @@ struct SpecificMovieOrSerieType {
     var similars: [MovieOrSerieListItemType]
     
     init() {
+        isFavorite = false
         title = ""
         image = ""
         releaseDate = ""
@@ -42,5 +44,9 @@ struct SpecificMovieOrSerieType {
         themoviedbRating = ""
         rottentomatoesRating = ""
         similars = [MovieOrSerieListItemType]()
+    }
+    
+    mutating func setFavorite(isFavorite: Bool) {
+        self.isFavorite = isFavorite
     }
 }

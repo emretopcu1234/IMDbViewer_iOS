@@ -51,7 +51,6 @@ class SpecificMovieOrSerieViewController: UIViewController {
         navigationItem.titleView = UIView()
         starFilledButton = UIBarButtonItem(image: UIImage(systemName: "star.fill"), style: .plain, target: self, action: #selector(removeFromFavorites(sender:)))
         starUnfilledButton = UIBarButtonItem(image: UIImage(systemName: "star"), style: .plain, target: self, action: #selector(addToFavorites(sender:)))
-        navigationItem.rightBarButtonItem = starUnfilledButton
         
         titleLabel.sizeToFit()
         releaseDateLabel.sizeToFit()
@@ -234,6 +233,12 @@ class SpecificMovieOrSerieViewController: UIViewController {
 extension SpecificMovieOrSerieViewController: SpecificMovieOrSerieDelegate {
     func onSpecificMovieOrSerieReceived(specificMovieOrSerie: SpecificMovieOrSerieType) {
         DispatchQueue.main.async { [self] in
+            if specificMovieOrSerie.isFavorite {
+                navigationItem.rightBarButtonItem = starFilledButton
+            }
+            else {
+                navigationItem.rightBarButtonItem = starUnfilledButton
+            }
             setTitle(title: specificMovieOrSerie.title)
             setReleaseDate(releaseDate: specificMovieOrSerie.releaseDate)
             setPlotInfo(plotInfo: specificMovieOrSerie.plotInfo)

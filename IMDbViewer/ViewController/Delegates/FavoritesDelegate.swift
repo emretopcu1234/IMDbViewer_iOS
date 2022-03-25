@@ -8,5 +8,5 @@
 import Foundation
 
 protocol FavoritesDelegate {
-    func onFavoritesListReceived(favoritesList: [String: MovieOrSerieListItemType])
+    func onFavoritesListReceived(favoritesList: [MovieOrSerieListItemType])
 }

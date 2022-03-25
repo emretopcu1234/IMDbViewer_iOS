@@ -12,7 +12,9 @@ class FavoritesViewController: UIViewController {
     @IBOutlet weak var collectionView: UICollectionView!
     
     var cellWidth = 0
-    var tempData = [GeneralCollectionViewCellModel]()
+    var favoritesData = [GeneralCollectionViewCellModel]()
+    
+    let favoritesModel = FavoritesModel.shared
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -32,24 +34,33 @@ class FavoritesViewController: UIViewController {
         let cellNib = UINib(nibName: "GeneralCollectionViewCell", bundle: nil)
         collectionView.register(cellNib, forCellWithReuseIdentifier: "generalCollectionViewCell")
         
-        loadData()
-        
+        favoritesModel.favoritesDelegate = self
     }
     
-    func loadData(){    // temporary
-//        tempData.append(GeneralCollectionViewCellModel(imageUrl: "https://m.media-amazon.com/images/M/MV5BMjAxMzY3NjcxNF5BMl5BanBnXkFtZTcwNTI5OTM0Mw@@._V1_Ratio0.6791_AL_.jpg", name: "Inception"))
-//        tempData.append(GeneralCollectionViewCellModel(imageUrl: "https://m.media-amazon.com/images/M/MV5BMWU4N2FjNzYtNTVkNC00NzQ0LTg0MjAtYTJlMjFhNGUxZDFmXkEyXkFqcGdeQXVyNjc1NTYyMjg@._V1_UX128_CR0,3,128,176_AL_.jpg", name: "Once upon a time in hollywood"))
-//        tempData.append(GeneralCollectionViewCellModel(imageUrl: "https://m.media-amazon.com/images/M/MV5BMjAxMzY3NjcxNF5BMl5BanBnXkFtZTcwNTI5OTM0Mw@@._V1_Ratio0.6791_AL_.jpg", name: "12 Angry Men"))
-//        tempData.append(GeneralCollectionViewCellModel(imageUrl: "https://m.media-amazon.com/images/M/MV5BMWU4N2FjNzYtNTVkNC00NzQ0LTg0MjAtYTJlMjFhNGUxZDFmXkEyXkFqcGdeQXVyNjc1NTYyMjg@._V1_UX128_CR0,3,128,176_AL_.jpg", name: "Inception3"))
-//        tempData.append(GeneralCollectionViewCellModel(imageUrl: "https://m.media-amazon.com/images/M/MV5BMjAxMzY3NjcxNF5BMl5BanBnXkFtZTcwNTI5OTM0Mw@@._V1_Ratio0.6791_AL_.jpg", name: "Inception4"))
-//        tempData.append(GeneralCollectionViewCellModel(imageUrl: "https://m.media-amazon.com/images/M/MV5BMjAxMzY3NjcxNF5BMl5BanBnXkFtZTcwNTI5OTM0Mw@@._V1_Ratio0.6791_AL_.jpg", name: "Inception5"))
-//        tempData.append(GeneralCollectionViewCellModel(imageUrl: "https://m.media-amazon.com/images/M/MV5BMjAxMzY3NjcxNF5BMl5BanBnXkFtZTcwNTI5OTM0Mw@@._V1_Ratio0.6791_AL_.jpg", name: "12 Angry Men"))
+    override func viewDidAppear(_ animated: Bool) {
+        favoritesModel.getFavoritesList()
+    }
+    
+    private func navigateToSpecificMovieOrSerie(id: String) {
+        let vc = UIStoryboard.init(name: "Main", bundle: Bundle.main).instantiateViewController(withIdentifier: "specificMovieOrSerieViewController") as? SpecificMovieOrSerieViewController
+        vc?.id = id
+        navigationController?.pushViewController(vc!, animated: true)
+    }
+}
+
+extension FavoritesViewController: FavoritesDelegate {
+    func onFavoritesListReceived(favoritesList: [MovieOrSerieListItemType]) {
+        favoritesData.removeAll()
+        for item in favoritesList {
+            favoritesData.append(GeneralCollectionViewCellModel(id: item.id, imageUrl: item.image, name: item.title))
+        }
+        collectionView.reloadData()
     }
 }
 
 extension FavoritesViewController: UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout, UICollectionViewDragDelegate, UICollectionViewDropDelegate {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return tempData.count
+        return favoritesData.count
     }
     
     func numberOfSections(in collectionView: UICollectionView) -> Int {
@@ -62,7 +73,7 @@ extension FavoritesViewController: UICollectionViewDelegate, UICollectionViewDat
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         if let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "generalCollectionViewCell", for: indexPath) as? GeneralCollectionViewCell {
-            let url = URL(string: tempData[indexPath.row].imageUrl)
+            let url = URL(string: favoritesData[indexPath.row].imageUrl)
             DispatchQueue.global().async {
                 let data = try? Data(contentsOf: url!)
                 DispatchQueue.main.async {
@@ -70,7 +81,7 @@ extension FavoritesViewController: UICollectionViewDelegate, UICollectionViewDat
                 }
             }
             cell.imageView.frame = CGRect(x: 0, y: 0, width: cellWidth, height: cellWidth)
-            cell.nameLabel.text = tempData[indexPath.row].name
+            cell.nameLabel.text = favoritesData[indexPath.row].name
             return cell
         }
         return UICollectionViewCell()
@@ -80,10 +91,14 @@ extension FavoritesViewController: UICollectionViewDelegate, UICollectionViewDat
         return UIEdgeInsets(top: ViewConstants.spacingBetweenGeneralCells, left: ViewConstants.spacingBetweenGeneralCells, bottom: ViewConstants.spacingBetweenGeneralCells, right: ViewConstants.spacingBetweenGeneralCells)
     }
     
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        navigateToSpecificMovieOrSerie(id: favoritesData[indexPath.row].id)
+    }
+    
     func collectionView(_ collectionView: UICollectionView, itemsForBeginning session: UIDragSession, at indexPath: IndexPath) -> [UIDragItem] {
         let itemProvider = NSItemProvider(object: "\(indexPath)" as NSString)
         let dragItem = UIDragItem(itemProvider: itemProvider)
-        dragItem.localObject = tempData[indexPath.row]
+        dragItem.localObject = favoritesData[indexPath.row]
         return [dragItem]
     }
     
@@ -110,10 +125,16 @@ extension FavoritesViewController: UICollectionViewDelegate, UICollectionViewDat
     private func reorderItems(coordinator: UICollectionViewDropCoordinator, destinationIndexPath: IndexPath, collectionView: UICollectionView) {
         if let item = coordinator.items.first, let sourceIndexPath = item.sourceIndexPath {
             collectionView.performBatchUpdates({
-                tempData.remove(at: sourceIndexPath.item)
-                tempData.insert(item.dragItem.localObject as! GeneralCollectionViewCellModel, at: destinationIndexPath.item)
+                favoritesData.remove(at: sourceIndexPath.item)
+                favoritesData.insert(item.dragItem.localObject as! GeneralCollectionViewCellModel, at: destinationIndexPath.item)
                 collectionView.deleteItems(at: [sourceIndexPath])
                 collectionView.insertItems(at: [destinationIndexPath])
+                
+                var newList = [MovieOrSerieListItemType]()
+                for data in favoritesData {
+                    newList.append(MovieOrSerieListItemType(id: data.id, title: data.name, image: data.imageUrl))
+                }
+                favoritesModel.reorderFavorites(newList: newList)
             }, completion: nil)
             coordinator.drop(item.dragItem, toItemAt: destinationIndexPath)
         }
